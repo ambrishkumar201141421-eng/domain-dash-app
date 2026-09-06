@@ -12,7 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedChatsRouteImport } from './routes/_authenticated/chats'
 import { Route as AuthenticatedCreateRouteImport } from './routes/_authenticated/create'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedChatIdRouteImport } from './routes/_authenticated/chat.$id'
+import { Route as AuthenticatedTaskIdRouteImport } from './routes/_authenticated/task.$id'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -28,40 +32,90 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChatsRoute = AuthenticatedChatsRouteImport.update({
+  id: '/chats',
+  path: '/chats',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedCreateRoute = AuthenticatedCreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedChatIdRoute = AuthenticatedChatIdRouteImport.update({
+  id: '/chat/$id',
+  path: '/chat/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTaskIdRoute = AuthenticatedTaskIdRouteImport.update({
+  id: '/task/$id',
+  path: '/task/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
+  '/chats': typeof AuthenticatedChatsRoute
   '/create': typeof AuthenticatedCreateRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/chat/$id': typeof AuthenticatedChatIdRoute
+  '/task/$id': typeof AuthenticatedTaskIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/chats': typeof AuthenticatedChatsRoute
   '/create': typeof AuthenticatedCreateRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/chat/$id': typeof AuthenticatedChatIdRoute
+  '/task/$id': typeof AuthenticatedTaskIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/chats': typeof AuthenticatedChatsRoute
   '/_authenticated/create': typeof AuthenticatedCreateRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/chat/$id': typeof AuthenticatedChatIdRoute
+  '/_authenticated/task/$id': typeof AuthenticatedTaskIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/create'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/chats'
+    | '/create'
+    | '/profile'
+    | '/chat/$id'
+    | '/task/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/create' | '/'
+  to:
+    | '/login'
+    | '/chats'
+    | '/create'
+    | '/profile'
+    | '/'
+    | '/chat/$id'
+    | '/task/$id'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
+    | '/_authenticated/chats'
     | '/_authenticated/create'
+    | '/_authenticated/profile'
     | '/_authenticated/'
+    | '/_authenticated/chat/$id'
+    | '/_authenticated/task/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,6 +146,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/chats': {
+      id: '/_authenticated/chats'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof AuthenticatedChatsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/create': {
       id: '/_authenticated/create'
       path: '/create'
@@ -99,17 +160,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/chat/$id': {
+      id: '/_authenticated/chat/$id'
+      path: '/chat/$id'
+      fullPath: '/chat/$id'
+      preLoaderRoute: typeof AuthenticatedChatIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/task/$id': {
+      id: '/_authenticated/task/$id'
+      path: '/task/$id'
+      fullPath: '/task/$id'
+      preLoaderRoute: typeof AuthenticatedTaskIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedChatsRoute: typeof AuthenticatedChatsRoute
   AuthenticatedCreateRoute: typeof AuthenticatedCreateRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedChatIdRoute: typeof AuthenticatedChatIdRoute
+  AuthenticatedTaskIdRoute: typeof AuthenticatedTaskIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedChatsRoute: AuthenticatedChatsRoute,
   AuthenticatedCreateRoute: AuthenticatedCreateRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedChatIdRoute: AuthenticatedChatIdRoute,
+  AuthenticatedTaskIdRoute: AuthenticatedTaskIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
