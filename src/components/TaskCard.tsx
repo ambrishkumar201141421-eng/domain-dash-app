@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export function TaskCard({ task }: { task: TaskWithPoster }) {
   const meta = CATEGORY_META[task.category];
-  const timer = countdown(task.expires_at);
+  const timer = task.status === "Open" ? countdown(task.expires_at) : null;
 
   return (
     <Link
