@@ -124,7 +124,6 @@ export const reviewFlagChecked = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       // Ban at the auth layer: revokes refresh tokens and blocks all future logins.
       await supabaseAdmin.auth.admin.updateUserById(flag.user_id, { ban_duration: "876000h" });
-      await supabaseAdmin.auth.admin.signOut(flag.user_id, "global").catch(() => undefined);
     }
 
     return { ok: true as const };
