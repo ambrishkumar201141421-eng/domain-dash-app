@@ -102,6 +102,57 @@ export type Database = {
           },
         ]
       }
+      moderation_flags: {
+        Row: {
+          content: string
+          context: string
+          created_at: string
+          id: number
+          matched_terms: string[]
+          review_status: Database["public"]["Enums"]["flag_review_status"]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          context?: string
+          created_at?: string
+          id?: never
+          matched_terms?: string[]
+          review_status?: Database["public"]["Enums"]["flag_review_status"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          context?: string
+          created_at?: string
+          id?: never
+          matched_terms?: string[]
+          review_status?: Database["public"]["Enums"]["flag_review_status"]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_flags_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moderation_flags_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -111,6 +162,8 @@ export type Database = {
           id: string
           rating: number
           ratings_count: number
+          status: Database["public"]["Enums"]["account_status"]
+          suspended_until: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -120,6 +173,8 @@ export type Database = {
           id: string
           rating?: number
           ratings_count?: number
+          status?: Database["public"]["Enums"]["account_status"]
+          suspended_until?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -129,6 +184,8 @@ export type Database = {
           id?: string
           rating?: number
           ratings_count?: number
+          status?: Database["public"]["Enums"]["account_status"]
+          suspended_until?: string | null
         }
         Relationships: []
       }
@@ -247,6 +304,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -268,6 +346,8 @@ export type Database = {
           id: string
           rating: number
           ratings_count: number
+          status: Database["public"]["Enums"]["account_status"]
+          suspended_until: string | null
         }
         SetofOptions: {
           from: "*"
@@ -276,10 +356,46 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      expire_verification: { Args: never; Returns: undefined }
       get_handshake_pin: { Args: { p_task_id: number }; Returns: number }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_active_user: { Args: never; Returns: boolean }
       is_chat_member: { Args: { p_chat_id: number }; Returns: boolean }
+      record_violation: {
+        Args: { p_content: string; p_context?: string; p_terms: string[] }
+        Returns: {
+          avatar_url: string | null
+          college_domain: string
+          created_at: string
+          full_name: string
+          id: string
+          rating: number
+          ratings_count: number
+          status: Database["public"]["Enums"]["account_status"]
+          suspended_until: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      review_flag: {
+        Args: { p_flag_id: number; p_guilty: boolean }
+        Returns: undefined
+      }
     }
     Enums: {
+      account_status: "active" | "in_verification" | "permanently_banned"
+      app_role: "admin" | "moderator" | "user"
+      flag_review_status: "pending" | "guilty" | "cleared"
       task_category: "Hustle" | "Playground" | "Lounge"
       task_status: "Open" | "Accepted" | "Completed" | "Expired" | "Cancelled"
     }
@@ -409,6 +525,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_status: ["active", "in_verification", "permanently_banned"],
+      app_role: ["admin", "moderator", "user"],
+      flag_review_status: ["pending", "guilty", "cleared"],
       task_category: ["Hustle", "Playground", "Lounge"],
       task_status: ["Open", "Accepted", "Completed", "Expired", "Cancelled"],
     },
