@@ -64,7 +64,17 @@ function ProfilePage() {
             <p className="text-xs text-muted-foreground">Completed</p>
           </div>
         </div>
+        {isAdmin ? (
+          <Link
+            to="/admin"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-primary"
+          >
+            <ShieldAlert className="size-3.5" />
+            Moderation queue
+          </Link>
+        ) : null}
       </div>
+
 
       {isLoading ? (
         <div className="grid place-items-center py-10">
