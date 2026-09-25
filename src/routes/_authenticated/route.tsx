@@ -1,8 +1,9 @@
 import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, LogOut, GraduationCap } from "lucide-react";
+import { Loader2, LogOut, GraduationCap, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { myProfileQuery } from "@/lib/queries";
+import { restrictionMessage } from "@/lib/moderation";
 import { BottomNav } from "@/components/BottomNav";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -54,8 +55,29 @@ function AuthedShell() {
     );
   }
 
+  const restriction = restrictionMessage(profile.status, profile.suspended_until);
+  if (restriction) {
+    return (
+      <div className="mx-auto grid min-h-screen max-w-md place-items-center px-6 text-center">
+        <div>
+          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-urgent/15 text-urgent">
+            <ShieldAlert className="size-7" />
+          </span>
+          <h1 className="mt-4 text-xl font-bold">
+            {profile.status === "permanently_banned" ? "Account suspended" : "Account under review"}
+          </h1>
+          <p className="mt-2 text-sm text-muted-foreground">{restriction}</p>
+          <button onClick={signOut} className="mt-6 text-sm font-semibold text-primary">
+            Sign out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen pb-20">
+
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-md items-center gap-2 px-4 py-3">
           <GraduationCap className="size-5 text-primary" />

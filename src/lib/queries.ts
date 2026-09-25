@@ -1,6 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type AccountStatus = "active" | "in_verification" | "permanently_banned";
+
 export type Profile = {
   id: string;
   full_name: string;
@@ -8,6 +10,8 @@ export type Profile = {
   rating: number;
   ratings_count: number;
   avatar_url: string | null;
+  status?: AccountStatus;
+  suspended_until?: string | null;
 };
 
 export type Task = {
@@ -34,12 +38,56 @@ export const myProfileQuery = (fullName: string) =>
   queryOptions({
     queryKey: ["profile", "me"],
     queryFn: async (): Promise<Profile> => {
+      // Let a lapsed 30-day review window clear itself before reading standing.
+      await supabase.rpc("expire_verification");
       const { data, error } = await supabase.rpc("ensure_profile", { p_full_name: fullName });
       if (error) throw error;
       return data as unknown as Profile;
     },
-    staleTime: 60_000,
+    staleTime: 30_000,
+    refetchInterval: 60_000,
   });
+
+export const isAdminQuery = (userId: string) =>
+  queryOptions({
+    queryKey: ["role", "admin", userId],
+    queryFn: async (): Promise<boolean> => {
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      if (error) throw error;
+      return Boolean(data);
+    },
+    staleTime: 5 * 60_000,
+  });
+
+export type ModerationFlag = {
+  id: number;
+  user_id: string;
+  content: string;
+  matched_terms: string[];
+  context: string;
+  review_status: "pending" | "guilty" | "cleared";
+  created_at: string;
+  reviewed_at: string | null;
+  student: Profile | null;
+};
+
+export const moderationQueueQuery = queryOptions({
+  queryKey: ["moderation", "queue"],
+  queryFn: async (): Promise<ModerationFlag[]> => {
+    const { data, error } = await supabase
+      .from("moderation_flags")
+      .select(
+        "id, user_id, content, matched_terms, context, review_status, created_at, reviewed_at, student:profiles!moderation_flags_user_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url, status, suspended_until)",
+      )
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) throw error;
+    return (data ?? []) as unknown as ModerationFlag[];
+  },
+});
 
 export const feedQuery = queryOptions({
   queryKey: ["tasks", "feed"],
