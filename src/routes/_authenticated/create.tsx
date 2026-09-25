@@ -1,15 +1,17 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { CATEGORIES, CATEGORY_META, isLive, type Category } from "@/lib/campus";
 import { myTasksQuery } from "@/lib/queries";
+import { createTaskChecked } from "@/lib/moderation.functions";
+import { scanText, restrictionMessage } from "@/lib/moderation";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/create")({
