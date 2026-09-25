@@ -1,8 +1,9 @@
 import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, LogOut, GraduationCap } from "lucide-react";
+import { Loader2, LogOut, GraduationCap, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { myProfileQuery } from "@/lib/queries";
+import { restrictionMessage } from "@/lib/moderation";
 import { BottomNav } from "@/components/BottomNav";
 import { useQueryClient } from "@tanstack/react-query";
 
