@@ -30,6 +30,7 @@ function ProfilePage() {
   const { data: profile } = useQuery(myProfileQuery(fullName));
   const { data: tasks, isLoading } = useQuery(myTasksQuery(user.id));
   const { data: reviews } = useQuery(ratingsForQuery(user.id));
+  const { data: isAdmin } = useQuery(isAdminQuery(user.id));
 
   const all = tasks ?? [];
   const active = all.filter((t) => t.status === "Accepted" || isLive(t));
