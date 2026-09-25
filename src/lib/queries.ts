@@ -1,6 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+export type AccountStatus = "active" | "in_verification" | "permanently_banned";
+
 export type Profile = {
   id: string;
   full_name: string;
@@ -8,6 +10,8 @@ export type Profile = {
   rating: number;
   ratings_count: number;
   avatar_url: string | null;
+  status?: AccountStatus;
+  suspended_until?: string | null;
 };
 
 export type Task = {
