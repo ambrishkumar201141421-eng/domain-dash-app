@@ -112,8 +112,10 @@ export function normalizeForModeration(input: string): string {
 
 function variants(text: string): string[] {
   const normalized = normalizeForModeration(text);
-  // also a spaceless form so "f u c k" and "e x a m l e a k" are caught
-  return [normalized, normalized.replace(/\s/g, "")];
+  // fully collapse stretched letters too: "fuuuuck" -> "fuck"
+  const collapsed = normalized.replace(/([a-z])\1+/g, "$1");
+  // spaceless forms so "f u c k" and "e x a m l e a k" are caught
+  return [normalized, normalized.replace(/\s/g, ""), collapsed, collapsed.replace(/\s/g, "")];
 }
 
 /** Returns every blocked term found in the text. Empty array means the text is clean. */
