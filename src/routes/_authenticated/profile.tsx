@@ -1,8 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Star, GraduationCap } from "lucide-react";
+import { Loader2, Star, GraduationCap, ShieldAlert } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
-import { myProfileQuery, myTasksQuery, ratingsForQuery } from "@/lib/queries";
+import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery } from "@/lib/queries";
 import { isLive, relativeTime } from "@/lib/campus";
 
 export const Route = createFileRoute("/_authenticated/profile")({
