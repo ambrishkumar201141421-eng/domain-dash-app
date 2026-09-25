@@ -59,27 +59,35 @@ function CreateTask() {
   ).length;
   const blocked = activeCount >= 3;
 
+  const submitTask = useServerFn(createTaskChecked);
+  const localHits = scanText(title, description, reward);
+
   const create = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from("tasks")
-        .insert({
-          poster_id: user.id,
+    mutationFn: () =>
+      submitTask({
+        data: {
           title: title.trim(),
           description: description.trim() || null,
           category,
           reward: reward.trim(),
-          expires_at: expiry ? new Date(Date.now() + expiry * 60000).toISOString() : null,
-        })
-        .select("id")
-        .single();
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (data) => {
+          expiresAt: expiry ? new Date(Date.now() + expiry * 60000).toISOString() : null,
+        },
+      }),
+    onSuccess: (result) => {
       queryClient.invalidateQueries();
-      toast.success("Posted to your campus feed");
-      navigate({ to: "/task/$id", params: { id: String(data.id) } });
+      if (result.ok) {
+        toast.success("Posted to your campus feed");
+        navigate({ to: "/task/$id", params: { id: String(result.id) } });
+        return;
+      }
+      const message =
+        restrictionMessage(result.status, result.suspendedUntil) ??
+        "Your post was rejected for a policy violation.";
+      toast.error(
+        result.reason === "flagged"
+          ? `Post rejected. ${message}`
+          : message,
+      );
     },
     onError: (err) => toast.error(err instanceof Error ? err.message : "Could not post"),
   });
@@ -98,6 +106,17 @@ function CreateTask() {
           You already have 3 active posts. Complete or cancel one before posting again.
         </div>
       ) : null}
+
+      {localHits.length > 0 ? (
+        <div className="flex gap-2 rounded-2xl border border-urgent/40 bg-surface p-4 text-sm text-urgent">
+          <ShieldAlert className="mt-0.5 size-4 shrink-0" />
+          <span>
+            This wording breaks our campus rules. Posting it will be rejected and put your account
+            under review for 30 days.
+          </span>
+        </div>
+      ) : null}
+
 
       <form
         className="space-y-5"
