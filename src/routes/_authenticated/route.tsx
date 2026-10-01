@@ -6,6 +6,10 @@ import { myProfileQuery } from "@/lib/queries";
 import { restrictionMessage } from "@/lib/moderation";
 import { BottomNav } from "@/components/BottomNav";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { NotificationBell } from "@/components/NotificationBell";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { getStoredTheme, setStoredTheme } from "@/lib/theme";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -23,6 +27,14 @@ function AuthedShell() {
   const queryClient = useQueryClient();
   const fullName = (user.user_metadata?.["full_name"] as string) ?? "";
   const { data: profile, isLoading, error } = useQuery(myProfileQuery(fullName));
+  const savedTheme = profile?.theme_pref;
+
+  // Carry the student's saved theme across devices and sign-ins.
+  useEffect(() => {
+    if (savedTheme && savedTheme !== "system" && savedTheme !== getStoredTheme()) {
+      setStoredTheme(savedTheme);
+    }
+  }, [savedTheme]);
 
   async function signOut() {
     await queryClient.cancelQueries();
@@ -85,13 +97,17 @@ function AuthedShell() {
             <p className="font-display text-sm font-bold">Campus Hustle</p>
             <p className="text-[11px] text-muted-foreground">{profile.college_domain}</p>
           </div>
-          <button
-            onClick={signOut}
-            aria-label="Sign out"
-            className="ml-auto grid size-9 place-items-center rounded-full bg-surface text-muted-foreground"
-          >
-            <LogOut className="size-4" />
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            <NotificationBell userId={user.id} alertsOn={Boolean(profile.notify_campus_tasks)} />
+            <ThemeToggle userId={user.id} />
+            <button
+              onClick={signOut}
+              aria-label="Sign out"
+              className="grid size-9 place-items-center rounded-full bg-surface text-muted-foreground"
+            >
+              <LogOut className="size-4" />
+            </button>
+          </div>
         </div>
       </header>
       <div className="mx-auto w-full max-w-md px-4 py-4">
