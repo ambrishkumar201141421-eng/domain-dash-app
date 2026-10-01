@@ -153,6 +153,60 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          campus: string
+          created_at: string
+          id: number
+          is_read: boolean
+          message: string | null
+          reward: string | null
+          task_id: number | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          campus: string
+          created_at?: string
+          id?: never
+          is_read?: boolean
+          message?: string | null
+          reward?: string | null
+          task_id?: number | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          campus?: string
+          created_at?: string
+          id?: never
+          is_read?: boolean
+          message?: string | null
+          reward?: string | null
+          task_id?: number | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -160,10 +214,12 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          notify_campus_tasks: boolean
           rating: number
           ratings_count: number
           status: Database["public"]["Enums"]["account_status"]
           suspended_until: string | null
+          theme_pref: string
         }
         Insert: {
           avatar_url?: string | null
@@ -171,10 +227,12 @@ export type Database = {
           created_at?: string
           full_name?: string
           id: string
+          notify_campus_tasks?: boolean
           rating?: number
           ratings_count?: number
           status?: Database["public"]["Enums"]["account_status"]
           suspended_until?: string | null
+          theme_pref?: string
         }
         Update: {
           avatar_url?: string | null
@@ -182,10 +240,12 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          notify_campus_tasks?: boolean
           rating?: number
           ratings_count?: number
           status?: Database["public"]["Enums"]["account_status"]
           suspended_until?: string | null
+          theme_pref?: string
         }
         Relationships: []
       }
@@ -344,10 +404,12 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          notify_campus_tasks: boolean
           rating: number
           ratings_count: number
           status: Database["public"]["Enums"]["account_status"]
           suspended_until: string | null
+          theme_pref: string
         }
         SetofOptions: {
           from: "*"
@@ -375,10 +437,12 @@ export type Database = {
           created_at: string
           full_name: string
           id: string
+          notify_campus_tasks: boolean
           rating: number
           ratings_count: number
           status: Database["public"]["Enums"]["account_status"]
           suspended_until: string | null
+          theme_pref: string
         }
         SetofOptions: {
           from: "*"
