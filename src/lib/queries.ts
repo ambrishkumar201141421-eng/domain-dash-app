@@ -12,6 +12,8 @@ export type Profile = {
   avatar_url: string | null;
   status?: AccountStatus;
   suspended_until?: string | null;
+  theme_pref?: "light" | "dark" | "system";
+  notify_campus_tasks?: boolean;
 };
 
 export type Task = {

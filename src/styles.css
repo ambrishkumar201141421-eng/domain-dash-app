@@ -81,8 +81,49 @@
   --urgent: oklch(0.72 0.2 22);
 }
 
-.dark {
+/* Light mode: warm paper base, deeper accents for contrast on white. */
+html.light {
+  --background: oklch(0.975 0.006 85);
+  --foreground: oklch(0.2 0.025 258);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.2 0.025 258);
+  --surface: oklch(0.94 0.01 250);
+  --surface-foreground: oklch(0.2 0.025 258);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.2 0.025 258);
+  --primary: oklch(0.55 0.15 158);
+  --primary-foreground: oklch(0.99 0.01 160);
+  --secondary: oklch(0.93 0.012 250);
+  --secondary-foreground: oklch(0.2 0.025 258);
+  --muted: oklch(0.94 0.01 250);
+  --muted-foreground: oklch(0.47 0.025 255);
+  --accent: oklch(0.92 0.015 250);
+  --accent-foreground: oklch(0.2 0.025 258);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.88 0.012 250);
+  --input: oklch(0.86 0.014 250);
+  --ring: oklch(0.55 0.15 158);
+  --hustle: oklch(0.58 0.15 60);
+  --hustle-soft: oklch(0.94 0.05 75);
+  --playground: oklch(0.52 0.12 210);
+  --playground-soft: oklch(0.93 0.04 205);
+  --lounge: oklch(0.55 0.17 345);
+  --lounge-soft: oklch(0.94 0.04 340);
+  --urgent: oklch(0.56 0.21 25);
+  color-scheme: light;
+}
+
+html.dark {
   color-scheme: dark;
+}
+
+html.theme-transition,
+html.theme-transition * {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease !important;
 }
 
 @layer base {

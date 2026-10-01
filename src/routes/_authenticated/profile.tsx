@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, Star, GraduationCap, ShieldAlert } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
+import { NotificationSettings } from "@/components/NotificationSettings";
 import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery } from "@/lib/queries";
 import { isLive, relativeTime } from "@/lib/campus";
 
@@ -74,6 +75,9 @@ function ProfilePage() {
           </Link>
         ) : null}
       </div>
+
+      <NotificationSettings userId={user.id} enabled={Boolean(profile?.notify_campus_tasks)} />
+
 
 
       {isLoading ? (
