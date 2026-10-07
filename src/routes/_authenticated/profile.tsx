@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2, Star, GraduationCap, ShieldAlert } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
 import { NotificationSettings } from "@/components/NotificationSettings";
-import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery } from "@/lib/queries";
+import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery, collegeQuery } from "@/lib/queries";
 import { isLive, relativeTime } from "@/lib/campus";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -29,6 +29,7 @@ function ProfilePage() {
   const { user } = Route.useRouteContext();
   const fullName = (user.user_metadata?.["full_name"] as string) ?? "";
   const { data: profile } = useQuery(myProfileQuery(fullName));
+  const { data: college } = useQuery(collegeQuery(profile?.college_domain));
   const { data: tasks, isLoading } = useQuery(myTasksQuery(user.id));
   const { data: reviews } = useQuery(ratingsForQuery(user.id));
   const { data: isAdmin } = useQuery(isAdminQuery(user.id));
