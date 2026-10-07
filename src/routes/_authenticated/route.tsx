@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, LogOut, GraduationCap, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { myProfileQuery } from "@/lib/queries";
+import { myProfileQuery, collegeQuery } from "@/lib/queries";
 import { restrictionMessage } from "@/lib/moderation";
 import { BottomNav } from "@/components/BottomNav";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,6 +27,7 @@ function AuthedShell() {
   const queryClient = useQueryClient();
   const fullName = (user.user_metadata?.["full_name"] as string) ?? "";
   const { data: profile, isLoading, error } = useQuery(myProfileQuery(fullName));
+  const { data: college } = useQuery(collegeQuery(profile?.college_domain));
   const savedTheme = profile?.theme_pref;
 
   // Carry the student's saved theme across devices and sign-ins.
@@ -95,7 +96,9 @@ function AuthedShell() {
           <GraduationCap className="size-5 text-primary" />
           <div className="leading-tight">
             <p className="font-display text-sm font-bold">Campus Hustle</p>
-            <p className="text-[11px] text-muted-foreground">{profile.college_domain}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {college ? college.short_name : profile.college_domain}
+            </p>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <NotificationBell userId={user.id} alertsOn={Boolean(profile.notify_campus_tasks)} />

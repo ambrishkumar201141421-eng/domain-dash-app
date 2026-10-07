@@ -63,6 +63,24 @@ export type Database = {
           },
         ]
       }
+      colleges: {
+        Row: {
+          domain: string
+          name: string
+          short_name: string
+        }
+        Insert: {
+          domain: string
+          name: string
+          short_name: string
+        }
+        Update: {
+          domain?: string
+          name?: string
+          short_name?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           chat_id: number

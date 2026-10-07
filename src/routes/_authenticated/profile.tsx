@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2, Star, GraduationCap, ShieldAlert } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
 import { NotificationSettings } from "@/components/NotificationSettings";
-import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery } from "@/lib/queries";
+import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery, collegeQuery } from "@/lib/queries";
 import { isLive, relativeTime } from "@/lib/campus";
 
 export const Route = createFileRoute("/_authenticated/profile")({
@@ -29,6 +29,7 @@ function ProfilePage() {
   const { user } = Route.useRouteContext();
   const fullName = (user.user_metadata?.["full_name"] as string) ?? "";
   const { data: profile } = useQuery(myProfileQuery(fullName));
+  const { data: college } = useQuery(collegeQuery(profile?.college_domain));
   const { data: tasks, isLoading } = useQuery(myTasksQuery(user.id));
   const { data: reviews } = useQuery(ratingsForQuery(user.id));
   const { data: isAdmin } = useQuery(isAdminQuery(user.id));
@@ -46,7 +47,7 @@ function ProfilePage() {
         <h1 className="mt-3 text-xl font-bold">{profile?.full_name}</h1>
         <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
           <GraduationCap className="size-3.5 text-primary" />
-          {profile?.college_domain}
+          {college ? `${college.name} (${college.short_name})` : profile?.college_domain}
         </span>
         <div className="mt-3 flex items-center justify-center gap-1 text-sm">
           <Star className="size-4 fill-primary text-primary" />
