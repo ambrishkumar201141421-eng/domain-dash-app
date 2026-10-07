@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, LogOut, GraduationCap, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { myProfileQuery } from "@/lib/queries";
+import { myProfileQuery, collegeQuery } from "@/lib/queries";
 import { restrictionMessage } from "@/lib/moderation";
 import { BottomNav } from "@/components/BottomNav";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,6 +27,7 @@ function AuthedShell() {
   const queryClient = useQueryClient();
   const fullName = (user.user_metadata?.["full_name"] as string) ?? "";
   const { data: profile, isLoading, error } = useQuery(myProfileQuery(fullName));
+  const { data: college } = useQuery(collegeQuery(profile?.college_domain));
   const savedTheme = profile?.theme_pref;
 
   // Carry the student's saved theme across devices and sign-ins.
