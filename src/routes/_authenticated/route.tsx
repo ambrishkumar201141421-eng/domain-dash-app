@@ -96,7 +96,9 @@ function AuthedShell() {
           <GraduationCap className="size-5 text-primary" />
           <div className="leading-tight">
             <p className="font-display text-sm font-bold">Campus Hustle</p>
-            <p className="text-[11px] text-muted-foreground">{profile.college_domain}</p>
+            <p className="text-[11px] text-muted-foreground">
+              {college ? college.short_name : profile.college_domain}
+            </p>
           </div>
           <div className="ml-auto flex items-center gap-2">
             <NotificationBell userId={user.id} alertsOn={Boolean(profile.notify_campus_tasks)} />
