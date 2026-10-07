@@ -50,6 +50,28 @@ export const myProfileQuery = (fullName: string) =>
     refetchInterval: 60_000,
   });
 
+export type College = {
+  domain: string;
+  name: string;
+  short_name: string;
+};
+
+export const collegeQuery = (domain: string | undefined) =>
+  queryOptions({
+    queryKey: ["college", domain],
+    enabled: Boolean(domain),
+    queryFn: async (): Promise<College | null> => {
+      const { data, error } = await supabase
+        .from("colleges")
+        .select("domain, name, short_name")
+        .eq("domain", domain!)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    staleTime: Infinity,
+  });
+
 export const isAdminQuery = (userId: string) =>
   queryOptions({
     queryKey: ["role", "admin", userId],
