@@ -162,6 +162,11 @@ function LoginPage() {
               minLength={6}
               required
             />
+            {mode === "signin" ? (
+              <Link to="/forgot-password" className="block pt-1 text-right text-xs font-semibold text-primary">
+                Forgot Password?
+              </Link>
+            ) : null}
           </div>
 
           <Button type="submit" className="w-full" size="lg" disabled={busy}>
