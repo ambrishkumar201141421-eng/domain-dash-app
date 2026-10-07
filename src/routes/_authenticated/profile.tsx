@@ -47,7 +47,7 @@ function ProfilePage() {
         <h1 className="mt-3 text-xl font-bold">{profile?.full_name}</h1>
         <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
           <GraduationCap className="size-3.5 text-primary" />
-          {profile?.college_domain}
+          {college ? `${college.name} (${college.short_name})` : profile?.college_domain}
         </span>
         <div className="mt-3 flex items-center justify-center gap-1 text-sm">
           <Star className="size-4 fill-primary text-primary" />
