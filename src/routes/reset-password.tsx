@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Eye, EyeOff, Loader2, ShieldX, Check, X } from "lucide-react";
+import { CheckCircle2, Loader2, ShieldX, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/reset-password")({
@@ -36,7 +36,6 @@ function ResetPasswordPage() {
   const [phase, setPhase] = useState<Phase>("checking");
   const [pw, setPw] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [show, setShow] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -117,24 +116,12 @@ function ResetPasswordPage() {
             <form onSubmit={submit} className="mt-5 space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="pw">New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="pw"
-                    type={show ? "text" : "password"}
-                    autoComplete="new-password"
-                    value={pw}
-                    onChange={(e) => setPw(e.target.value)}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShow((s) => !s)}
-                    aria-label={show ? "Hide password" : "Show password"}
-                    className="absolute inset-y-0 right-0 grid w-10 place-items-center text-muted-foreground"
-                  >
-                    {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                  </button>
-                </div>
+                <PasswordInput
+                  id="pw"
+                  autoComplete="new-password"
+                  value={pw}
+                  onChange={(e) => setPw(e.target.value)}
+                />
                 <div className="flex gap-1 pt-1">
                   {RULES.map((_, i) => (
                     <span
@@ -157,9 +144,8 @@ function ResetPasswordPage() {
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="confirm">Confirm New Password</Label>
-                <Input
+                <PasswordInput
                   id="confirm"
-                  type={show ? "text" : "password"}
                   autoComplete="new-password"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
