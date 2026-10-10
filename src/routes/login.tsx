@@ -35,6 +35,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [exists, setExists] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -53,16 +54,29 @@ function LoginPage() {
     }
     setBusy(true);
     try {
+      const cleanEmail = email.trim().toLowerCase();
+      setExists(false);
       if (mode === "signup") {
         const { data, error } = await supabase.auth.signUp({
-          email: email.trim(),
+          email: cleanEmail,
           password,
           options: {
             emailRedirectTo: window.location.origin,
             data: { full_name: name.trim() },
           },
         });
-        if (error) throw error;
+        if (error) {
+          if (/already|registered|exists/i.test(error.message)) {
+            setExists(true);
+            return;
+          }
+          throw error;
+        }
+        // Existing confirmed account: auth returns a user with no identities and creates nothing.
+        if (data.user && (data.user.identities?.length ?? 0) === 0) {
+          setExists(true);
+          return;
+        }
         if (!data.session) {
           toast.success("Check your college inbox to confirm your account.");
         } else {
@@ -70,7 +84,7 @@ function LoginPage() {
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
+          email: cleanEmail,
           password,
         });
         if (error) throw error;
@@ -115,6 +129,15 @@ function LoginPage() {
           ))}
         </div>
 
+        {exists && mode === "signup" ? (
+          <div className="mb-4 rounded-xl border border-urgent/40 bg-urgent/10 p-3 text-sm">
+            <p>An account with this email already exists. Please log in or reset your password if you've forgotten it.</p>
+            <div className="mt-2 flex gap-4 font-semibold text-primary">
+              <button type="button" onClick={() => { setMode("signin"); setExists(false); }}>Log In</button>
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </div>
+          </div>
+        ) : null}
         <form onSubmit={submit} className="space-y-4">
           {mode === "signup" ? (
             <div className="space-y-1.5">
