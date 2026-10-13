@@ -22,6 +22,13 @@
       "when": 1791920757485,
       "tag": "0002_events_and_partner_finder",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791920826796,
+      "tag": "0003_event_art_read",
+      "breakpoints": true
     }
   ]
 }
