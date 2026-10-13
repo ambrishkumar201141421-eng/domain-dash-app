@@ -15,6 +15,13 @@
       "when": 1791377725077,
       "tag": "0001_create_colleges_add_iiit_kottayam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791920757485,
+      "tag": "0002_events_and_partner_finder",
+      "breakpoints": true
     }
   ]
 }

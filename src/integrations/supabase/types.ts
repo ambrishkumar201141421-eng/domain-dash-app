@@ -81,6 +81,243 @@ export type Database = {
         }
         Relationships: []
       }
+      connection_messages: {
+        Row: {
+          created_at: string
+          id: number
+          interest_id: number
+          message_text: string
+          sender_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: never
+          interest_id: number
+          message_text: string
+          sender_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: never
+          interest_id?: number
+          message_text?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "connection_messages_interest_id_fkey"
+            columns: ["interest_id"]
+            isOneToOne: false
+            referencedRelation: "event_interests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "connection_messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_interests: {
+        Row: {
+          created_at: string
+          event_id: number
+          from_user: string
+          id: number
+          responded_at: string | null
+          status: string
+          to_user: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: number
+          from_user: string
+          id?: never
+          responded_at?: string | null
+          status?: string
+          to_user: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: number
+          from_user?: string
+          id?: never
+          responded_at?: string | null
+          status?: string
+          to_user?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_interests_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_interests_from_user_fkey"
+            columns: ["from_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_interests_to_user_fkey"
+            columns: ["to_user"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_participants: {
+        Row: {
+          availability: string | null
+          college_domain: string
+          created_at: string
+          event_id: number
+          experience: string
+          group_pref: string
+          id: number
+          intro: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: string | null
+          college_domain?: string
+          created_at?: string
+          event_id: number
+          experience?: string
+          group_pref?: string
+          id?: never
+          intro?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: string | null
+          college_domain?: string
+          created_at?: string
+          event_id?: number
+          experience?: string
+          group_pref?: string
+          id?: never
+          intro?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_participants_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_participants_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          campus_domain: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          cta_label: string
+          cta_path: string | null
+          description: string | null
+          display_order: number
+          ends_at: string | null
+          expires_at: string | null
+          headline: string | null
+          id: number
+          image_alt: string | null
+          image_url: string | null
+          is_featured: boolean
+          is_official: boolean
+          partner_finder: boolean
+          publish_at: string | null
+          slug: string
+          starts_at: string | null
+          status: Database["public"]["Enums"]["event_status"]
+          subtitle: string | null
+          title: string
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          campus_domain?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_path?: string | null
+          description?: string | null
+          display_order?: number
+          ends_at?: string | null
+          expires_at?: string | null
+          headline?: string | null
+          id?: never
+          image_alt?: string | null
+          image_url?: string | null
+          is_featured?: boolean
+          is_official?: boolean
+          partner_finder?: boolean
+          publish_at?: string | null
+          slug: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          campus_domain?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          cta_label?: string
+          cta_path?: string | null
+          description?: string | null
+          display_order?: number
+          ends_at?: string | null
+          expires_at?: string | null
+          headline?: string | null
+          id?: never
+          image_alt?: string | null
+          image_url?: string | null
+          is_featured?: boolean
+          is_official?: boolean
+          partner_finder?: boolean
+          publish_at?: string | null
+          slug?: string
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           chat_id: number
@@ -447,6 +684,10 @@ export type Database = {
       }
       is_active_user: { Args: never; Returns: boolean }
       is_chat_member: { Args: { p_chat_id: number }; Returns: boolean }
+      is_connection_member: {
+        Args: { p_interest_id: number }
+        Returns: boolean
+      }
       record_violation: {
         Args: { p_content: string; p_context?: string; p_terms: string[] }
         Returns: {
@@ -469,6 +710,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      report_student: {
+        Args: { p_context?: string; p_reason: string; p_user_id: string }
+        Returns: undefined
+      }
       review_flag: {
         Args: { p_flag_id: number; p_guilty: boolean }
         Returns: undefined
@@ -477,6 +722,7 @@ export type Database = {
     Enums: {
       account_status: "active" | "in_verification" | "permanently_banned"
       app_role: "admin" | "moderator" | "user"
+      event_status: "draft" | "published" | "archived"
       flag_review_status: "pending" | "guilty" | "cleared"
       task_category: "Hustle" | "Playground" | "Lounge"
       task_status: "Open" | "Accepted" | "Completed" | "Expired" | "Cancelled"
@@ -609,6 +855,7 @@ export const Constants = {
     Enums: {
       account_status: ["active", "in_verification", "permanently_banned"],
       app_role: ["admin", "moderator", "user"],
+      event_status: ["draft", "published", "archived"],
       flag_review_status: ["pending", "guilty", "cleared"],
       task_category: ["Hustle", "Playground", "Lounge"],
       task_status: ["Open", "Accepted", "Completed", "Expired", "Cancelled"],
