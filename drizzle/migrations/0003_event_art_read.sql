@@ -1,0 +1,1 @@
+CREATE POLICY event_art_authenticated_read ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'event-art');
