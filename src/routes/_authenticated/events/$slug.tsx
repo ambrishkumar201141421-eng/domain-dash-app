@@ -299,7 +299,7 @@ function ParticipantCard({
   pending,
 }: {
   p: Participant;
-  interest?: { status: string };
+  interest: { status: string } | undefined;
   onConnect: () => void;
   pending: boolean;
 }) {
