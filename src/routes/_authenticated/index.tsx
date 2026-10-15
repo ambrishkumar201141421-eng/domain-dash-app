@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, Loader2, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { TaskCard } from "@/components/TaskCard";
+import { TrendingEvents } from "@/components/TrendingEvents";
 import { feedQuery } from "@/lib/queries";
 import { CATEGORIES, CATEGORY_META, isLive } from "@/lib/campus";
 import { cn } from "@/lib/utils";
