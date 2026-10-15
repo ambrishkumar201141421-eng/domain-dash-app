@@ -19,7 +19,9 @@ import { Route as AuthenticatedChatsRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedCreateRouteImport } from './routes/_authenticated/create'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedChatIdRouteImport } from './routes/_authenticated/chat.$id'
+import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections/$id'
 import { Route as AuthenticatedEventsIndexRouteImport } from './routes/_authenticated/events/index'
+import { Route as AuthenticatedEventsSlugRouteImport } from './routes/_authenticated/events/$slug'
 import { Route as AuthenticatedTaskIdRouteImport } from './routes/_authenticated/task.$id'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -71,12 +73,23 @@ const AuthenticatedChatIdRoute = AuthenticatedChatIdRouteImport.update({
   path: '/chat/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedConnectionsIdRoute =
+  AuthenticatedConnectionsIdRouteImport.update({
+    id: '/connections/$id',
+    path: '/connections/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedEventsIndexRoute =
   AuthenticatedEventsIndexRouteImport.update({
     id: '/events/',
     path: '/events/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedEventsSlugRoute = AuthenticatedEventsSlugRouteImport.update({
+  id: '/events/$slug',
+  path: '/events/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTaskIdRoute = AuthenticatedTaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
@@ -93,6 +106,8 @@ export interface FileRoutesByFullPath {
   '/create': typeof AuthenticatedCreateRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
+  '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -106,6 +121,8 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
+  '/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events': typeof AuthenticatedEventsIndexRoute
 }
@@ -121,6 +138,8 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/chat/$id': typeof AuthenticatedChatIdRoute
+  '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
+  '/_authenticated/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/_authenticated/task/$id': typeof AuthenticatedTaskIdRoute
   '/_authenticated/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -136,6 +155,8 @@ export interface FileRouteTypes {
     | '/create'
     | '/profile'
     | '/chat/$id'
+    | '/connections/$id'
+    | '/events/$slug'
     | '/task/$id'
     | '/events/'
   fileRoutesByTo: FileRoutesByTo
@@ -149,6 +170,8 @@ export interface FileRouteTypes {
     | '/profile'
     | '/'
     | '/chat/$id'
+    | '/connections/$id'
+    | '/events/$slug'
     | '/task/$id'
     | '/events'
   id:
@@ -163,6 +186,8 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/'
     | '/_authenticated/chat/$id'
+    | '/_authenticated/connections/$id'
+    | '/_authenticated/events/$slug'
     | '/_authenticated/task/$id'
     | '/_authenticated/events/'
   fileRoutesById: FileRoutesById
@@ -246,11 +271,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/connections/$id': {
+      id: '/_authenticated/connections/$id'
+      path: '/connections/$id'
+      fullPath: '/connections/$id'
+      preLoaderRoute: typeof AuthenticatedConnectionsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/events/': {
       id: '/_authenticated/events/'
       path: '/events'
       fullPath: '/events/'
       preLoaderRoute: typeof AuthenticatedEventsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/events/$slug': {
+      id: '/_authenticated/events/$slug'
+      path: '/events/$slug'
+      fullPath: '/events/$slug'
+      preLoaderRoute: typeof AuthenticatedEventsSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/task/$id': {
@@ -270,6 +309,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedChatIdRoute: typeof AuthenticatedChatIdRoute
+  AuthenticatedConnectionsIdRoute: typeof AuthenticatedConnectionsIdRoute
+  AuthenticatedEventsSlugRoute: typeof AuthenticatedEventsSlugRoute
   AuthenticatedTaskIdRoute: typeof AuthenticatedTaskIdRoute
   AuthenticatedEventsIndexRoute: typeof AuthenticatedEventsIndexRoute
 }
@@ -281,6 +322,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedChatIdRoute: AuthenticatedChatIdRoute,
+  AuthenticatedConnectionsIdRoute: AuthenticatedConnectionsIdRoute,
+  AuthenticatedEventsSlugRoute: AuthenticatedEventsSlugRoute,
   AuthenticatedTaskIdRoute: AuthenticatedTaskIdRoute,
   AuthenticatedEventsIndexRoute: AuthenticatedEventsIndexRoute,
 }

@@ -4,7 +4,7 @@ export type ThemePref = "light" | "dark" | "system";
 export const THEME_KEY = "ch-theme";
 
 /** Runs before paint (inlined in <head>) so there is no flash of the wrong theme. */
-export const THEME_BOOT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'system';var d=p==='dark'||(p==='system'&&!window.matchMedia('(prefers-color-scheme: light)').matches);var r=document.documentElement;r.classList.toggle('light',!d);r.classList.toggle('dark',d);}catch(e){}})();`;
+export const THEME_BOOT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'light';var d=p==='dark'||(p==='system'&&!window.matchMedia('(prefers-color-scheme: light)').matches);var r=document.documentElement;r.classList.toggle('light',!d);r.classList.toggle('dark',d);}catch(e){}})();`;
 
 export function resolveTheme(pref: ThemePref): "light" | "dark" {
   if (pref !== "system") return pref;
@@ -23,7 +23,7 @@ export function applyTheme(pref: ThemePref) {
 
 export function getStoredTheme(): ThemePref {
   const v = localStorage.getItem(THEME_KEY);
-  return v === "light" || v === "dark" ? v : "system";
+  return v === "light" || v === "dark" || v === "system" ? v : "light";
 }
 
 export function setStoredTheme(pref: ThemePref) {
