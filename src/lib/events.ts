@@ -14,6 +14,13 @@ export const CATEGORY_LABEL: Record<EventCategory, string> = {
 
 export const EXPERIENCE = ["Beginner", "Intermediate", "Experienced", "Just Here to Have Fun"] as const;
 export const GROUP_PREFS = ["Partner", "Small Group", "Open to Either"] as const;
+export const COLLEGE_YEARS = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year", "Other"] as const;
+export const LOOKING_LABEL: Record<(typeof GROUP_PREFS)[number], string> = {
+  Partner: "A Garba Partner",
+  "Small Group": "A Group to Dance With",
+  "Open to Either": "Both — Partner or Group",
+};
+export const GARBA_SLUG = "garba-night";
 export const ART_BUCKET = "event-art";
 
 export type CampusEvent = {
@@ -50,6 +57,7 @@ export type Participant = {
   experience: (typeof EXPERIENCE)[number];
   group_pref: (typeof GROUP_PREFS)[number];
   availability: string | null;
+  college_year: (typeof COLLEGE_YEARS)[number] | null;
   intro: string | null;
   created_at: string;
   student: Pick<Profile, "id" | "full_name" | "avatar_url" | "rating" | "ratings_count"> | null;
@@ -126,7 +134,7 @@ export const participantsQuery = (eventId: number) =>
       const { data, error } = await supabase
         .from("event_participants")
         .select(
-          "id, event_id, user_id, college_domain, experience, group_pref, availability, intro, created_at, student:profiles!event_participants_user_id_fkey(id, full_name, avatar_url, rating, ratings_count)",
+          "id, event_id, user_id, college_domain, experience, group_pref, availability, college_year, intro, created_at, student:profiles!event_participants_user_id_fkey(id, full_name, avatar_url, rating, ratings_count)",
         )
         .eq("event_id", eventId)
         .order("created_at", { ascending: true });

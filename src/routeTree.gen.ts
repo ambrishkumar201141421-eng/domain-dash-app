@@ -17,11 +17,11 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedChatsRouteImport } from './routes/_authenticated/chats'
 import { Route as AuthenticatedCreateRouteImport } from './routes/_authenticated/create'
+import { Route as AuthenticatedGarbaRouteImport } from './routes/_authenticated/garba'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedChatIdRouteImport } from './routes/_authenticated/chat.$id'
 import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections/$id'
 import { Route as AuthenticatedEventsIndexRouteImport } from './routes/_authenticated/events/index'
-import { Route as AuthenticatedEventsSlugRouteImport } from './routes/_authenticated/events/$slug'
 import { Route as AuthenticatedTaskIdRouteImport } from './routes/_authenticated/task.$id'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -63,6 +63,11 @@ const AuthenticatedCreateRoute = AuthenticatedCreateRouteImport.update({
   path: '/create',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedGarbaRoute = AuthenticatedGarbaRouteImport.update({
+  id: '/garba',
+  path: '/garba',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -85,11 +90,6 @@ const AuthenticatedEventsIndexRoute =
     path: '/events/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedEventsSlugRoute = AuthenticatedEventsSlugRouteImport.update({
-  id: '/events/$slug',
-  path: '/events/$slug',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedTaskIdRoute = AuthenticatedTaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
@@ -104,10 +104,10 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/chats': typeof AuthenticatedChatsRoute
   '/create': typeof AuthenticatedCreateRoute
+  '/garba': typeof AuthenticatedGarbaRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -118,11 +118,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/chats': typeof AuthenticatedChatsRoute
   '/create': typeof AuthenticatedCreateRoute
+  '/garba': typeof AuthenticatedGarbaRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events': typeof AuthenticatedEventsIndexRoute
 }
@@ -135,11 +135,11 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/chats': typeof AuthenticatedChatsRoute
   '/_authenticated/create': typeof AuthenticatedCreateRoute
+  '/_authenticated/garba': typeof AuthenticatedGarbaRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/chat/$id': typeof AuthenticatedChatIdRoute
   '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/_authenticated/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/_authenticated/task/$id': typeof AuthenticatedTaskIdRoute
   '/_authenticated/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -153,10 +153,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/chats'
     | '/create'
+    | '/garba'
     | '/profile'
     | '/chat/$id'
     | '/connections/$id'
-    | '/events/$slug'
     | '/task/$id'
     | '/events/'
   fileRoutesByTo: FileRoutesByTo
@@ -167,11 +167,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/chats'
     | '/create'
+    | '/garba'
     | '/profile'
     | '/'
     | '/chat/$id'
     | '/connections/$id'
-    | '/events/$slug'
     | '/task/$id'
     | '/events'
   id:
@@ -183,11 +183,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/chats'
     | '/_authenticated/create'
+    | '/_authenticated/garba'
     | '/_authenticated/profile'
     | '/_authenticated/'
     | '/_authenticated/chat/$id'
     | '/_authenticated/connections/$id'
-    | '/_authenticated/events/$slug'
     | '/_authenticated/task/$id'
     | '/_authenticated/events/'
   fileRoutesById: FileRoutesById
@@ -257,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCreateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/garba': {
+      id: '/_authenticated/garba'
+      path: '/garba'
+      fullPath: '/garba'
+      preLoaderRoute: typeof AuthenticatedGarbaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profile': {
       id: '/_authenticated/profile'
       path: '/profile'
@@ -285,13 +292,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/events/$slug': {
-      id: '/_authenticated/events/$slug'
-      path: '/events/$slug'
-      fullPath: '/events/$slug'
-      preLoaderRoute: typeof AuthenticatedEventsSlugRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/task/$id': {
       id: '/_authenticated/task/$id'
       path: '/task/$id'
@@ -306,11 +306,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedChatsRoute: typeof AuthenticatedChatsRoute
   AuthenticatedCreateRoute: typeof AuthenticatedCreateRoute
+  AuthenticatedGarbaRoute: typeof AuthenticatedGarbaRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedChatIdRoute: typeof AuthenticatedChatIdRoute
   AuthenticatedConnectionsIdRoute: typeof AuthenticatedConnectionsIdRoute
-  AuthenticatedEventsSlugRoute: typeof AuthenticatedEventsSlugRoute
   AuthenticatedTaskIdRoute: typeof AuthenticatedTaskIdRoute
   AuthenticatedEventsIndexRoute: typeof AuthenticatedEventsIndexRoute
 }
@@ -319,11 +319,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedChatsRoute: AuthenticatedChatsRoute,
   AuthenticatedCreateRoute: AuthenticatedCreateRoute,
+  AuthenticatedGarbaRoute: AuthenticatedGarbaRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedChatIdRoute: AuthenticatedChatIdRoute,
   AuthenticatedConnectionsIdRoute: AuthenticatedConnectionsIdRoute,
-  AuthenticatedEventsSlugRoute: AuthenticatedEventsSlugRoute,
   AuthenticatedTaskIdRoute: AuthenticatedTaskIdRoute,
   AuthenticatedEventsIndexRoute: AuthenticatedEventsIndexRoute,
 }

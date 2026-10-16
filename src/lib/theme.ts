@@ -4,11 +4,11 @@ export type ThemePref = "light" | "dark" | "system";
 export const THEME_KEY = "ch-theme";
 
 /** Runs before paint (inlined in <head>) so there is no flash of the wrong theme. */
-export const THEME_BOOT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'light';var d=p==='dark'||(p==='system'&&!window.matchMedia('(prefers-color-scheme: light)').matches);var r=document.documentElement;r.classList.toggle('light',!d);r.classList.toggle('dark',d);}catch(e){}})();`;
+export const THEME_BOOT_SCRIPT = `(function(){try{var p=localStorage.getItem('${THEME_KEY}')||'light';var d=p==='dark';var r=document.documentElement;r.classList.toggle('light',!d);r.classList.toggle('dark',d);}catch(e){}})();`;
 
 export function resolveTheme(pref: ThemePref): "light" | "dark" {
-  if (pref !== "system") return pref;
-  return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  // Bright Mode unless the student explicitly chose Dark — never follow the device setting.
+  return pref === "dark" ? "dark" : "light";
 }
 
 export function applyTheme(pref: ThemePref) {

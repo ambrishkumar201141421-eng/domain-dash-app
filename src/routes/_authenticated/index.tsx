@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, Loader2, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { TaskCard } from "@/components/TaskCard";
-import { TrendingEvents } from "@/components/TrendingEvents";
+import { GarbaBanner } from "@/components/GarbaBanner";
 import { feedQuery } from "@/lib/queries";
 import { CATEGORIES, CATEGORY_META, isLive } from "@/lib/campus";
 import { cn } from "@/lib/utils";
@@ -55,7 +55,7 @@ function Feed() {
         </p>
       </div>
 
-      <TrendingEvents />
+      <GarbaBanner />
 
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
