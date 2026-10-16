@@ -160,3 +160,8 @@ html.theme-transition * {
   border: 1px solid var(--border);
   box-shadow: 0 10px 30px -18px oklch(0 0 0 / 0.8);
 }
+
+@keyframes garba-zoom {
+  from { transform: scale(1.12); }
+  to { transform: scale(1.02); }
+}
