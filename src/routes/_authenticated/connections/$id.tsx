@@ -71,7 +71,7 @@ function ConnectionChatPage() {
           Chats open once both of you accept the connection.
         </p>
         <Button asChild variant="outline" className="mt-4">
-          <Link to="/events">Back to events</Link>
+          <Link to="/garba">Back to Garba Night</Link>
         </Button>
       </div>
     );
@@ -83,8 +83,7 @@ function ConnectionChatPage() {
     <div className="flex h-[calc(100dvh-11rem)] flex-col gap-3">
       <div className="flex items-center gap-2">
         <Link
-          to="/events/$slug"
-          params={{ slug: conn.event?.slug ?? "" }}
+          to="/garba"
           className="inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
         >
           <ArrowLeft className="size-4" /> {conn.event?.title ?? "Event"}
