@@ -1,0 +1,2 @@
+ALTER TABLE public.event_participants ADD COLUMN IF NOT EXISTS college_year text CHECK (college_year IS NULL OR college_year IN ('1st Year','2nd Year','3rd Year','4th Year','5th Year','Other'));
+ALTER TABLE public.event_participants ADD CONSTRAINT event_participants_intro_len CHECK (intro IS NULL OR char_length(intro) <= 160) NOT VALID;

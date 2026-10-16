@@ -176,6 +176,7 @@ export type Database = {
         Row: {
           availability: string | null
           college_domain: string
+          college_year: string | null
           created_at: string
           event_id: number
           experience: string
@@ -188,6 +189,7 @@ export type Database = {
         Insert: {
           availability?: string | null
           college_domain?: string
+          college_year?: string | null
           created_at?: string
           event_id: number
           experience?: string
@@ -200,6 +202,7 @@ export type Database = {
         Update: {
           availability?: string | null
           college_domain?: string
+          college_year?: string | null
           created_at?: string
           event_id?: number
           experience?: string
