@@ -21,7 +21,6 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedChatIdRouteImport } from './routes/_authenticated/chat.$id'
 import { Route as AuthenticatedConnectionsIdRouteImport } from './routes/_authenticated/connections/$id'
 import { Route as AuthenticatedEventsIndexRouteImport } from './routes/_authenticated/events/index'
-import { Route as AuthenticatedEventsSlugRouteImport } from './routes/_authenticated/events/$slug'
 import { Route as AuthenticatedTaskIdRouteImport } from './routes/_authenticated/task.$id'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -85,11 +84,6 @@ const AuthenticatedEventsIndexRoute =
     path: '/events/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedEventsSlugRoute = AuthenticatedEventsSlugRouteImport.update({
-  id: '/events/$slug',
-  path: '/events/$slug',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedTaskIdRoute = AuthenticatedTaskIdRouteImport.update({
   id: '/task/$id',
   path: '/task/$id',
@@ -107,7 +101,6 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -122,7 +115,6 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/chat/$id': typeof AuthenticatedChatIdRoute
   '/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/task/$id': typeof AuthenticatedTaskIdRoute
   '/events': typeof AuthenticatedEventsIndexRoute
 }
@@ -139,7 +131,6 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/chat/$id': typeof AuthenticatedChatIdRoute
   '/_authenticated/connections/$id': typeof AuthenticatedConnectionsIdRoute
-  '/_authenticated/events/$slug': typeof AuthenticatedEventsSlugRoute
   '/_authenticated/task/$id': typeof AuthenticatedTaskIdRoute
   '/_authenticated/events/': typeof AuthenticatedEventsIndexRoute
 }
@@ -156,7 +147,6 @@ export interface FileRouteTypes {
     | '/profile'
     | '/chat/$id'
     | '/connections/$id'
-    | '/events/$slug'
     | '/task/$id'
     | '/events/'
   fileRoutesByTo: FileRoutesByTo
@@ -171,7 +161,6 @@ export interface FileRouteTypes {
     | '/'
     | '/chat/$id'
     | '/connections/$id'
-    | '/events/$slug'
     | '/task/$id'
     | '/events'
   id:
@@ -187,7 +176,6 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/chat/$id'
     | '/_authenticated/connections/$id'
-    | '/_authenticated/events/$slug'
     | '/_authenticated/task/$id'
     | '/_authenticated/events/'
   fileRoutesById: FileRoutesById
@@ -285,13 +273,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/events/$slug': {
-      id: '/_authenticated/events/$slug'
-      path: '/events/$slug'
-      fullPath: '/events/$slug'
-      preLoaderRoute: typeof AuthenticatedEventsSlugRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/task/$id': {
       id: '/_authenticated/task/$id'
       path: '/task/$id'
@@ -310,7 +291,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedChatIdRoute: typeof AuthenticatedChatIdRoute
   AuthenticatedConnectionsIdRoute: typeof AuthenticatedConnectionsIdRoute
-  AuthenticatedEventsSlugRoute: typeof AuthenticatedEventsSlugRoute
   AuthenticatedTaskIdRoute: typeof AuthenticatedTaskIdRoute
   AuthenticatedEventsIndexRoute: typeof AuthenticatedEventsIndexRoute
 }
@@ -323,7 +303,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedChatIdRoute: AuthenticatedChatIdRoute,
   AuthenticatedConnectionsIdRoute: AuthenticatedConnectionsIdRoute,
-  AuthenticatedEventsSlugRoute: AuthenticatedEventsSlugRoute,
   AuthenticatedTaskIdRoute: AuthenticatedTaskIdRoute,
   AuthenticatedEventsIndexRoute: AuthenticatedEventsIndexRoute,
 }
