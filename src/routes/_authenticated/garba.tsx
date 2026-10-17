@@ -40,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/garba")({
   component: GarbaPage,
 });
 
-function Avatar({ url, name, size = "size-12" }: { url?: string | null; name: string; size?: string }) {
+function Avatar({ url, name, size = "size-12" }: { url?: string | null | undefined; name: string; size?: string }) {
   return url ? (
     <img src={url} alt="" className={cn(size, "shrink-0 rounded-full object-cover")} />
   ) : (
@@ -387,7 +387,7 @@ function JoinForm({
   avatar: string | null;
   campus: string;
   onDone: () => void;
-  onCancel?: () => void;
+  onCancel?: (() => void) | undefined;
 }) {
   const [year, setYear] = useState<Year | null>(existing?.college_year ?? null);
   const [pref, setPref] = useState<Pref | null>(existing?.group_pref ?? null);
