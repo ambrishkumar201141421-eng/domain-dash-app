@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Loader2, Send } from "lucide-react";
@@ -89,7 +90,10 @@ function ConnectionChatPage() {
           <ArrowLeft className="size-4" /> {conn.event?.title ?? "Event"}
         </Link>
       </div>
-      <h1 className="text-xl font-bold">{other?.full_name ?? "Your connection"}</h1>
+      <div className="flex items-center gap-3">
+        <UserAvatar url={other?.avatar_url} name={other?.full_name} className="size-10" />
+        <h1 className="text-xl font-bold">{other?.full_name ?? "Your connection"}</h1>
+      </div>
 
       <div className="glass-card flex-1 space-y-3 overflow-y-auto rounded-2xl p-4">
         {(messages ?? []).length === 0 && (

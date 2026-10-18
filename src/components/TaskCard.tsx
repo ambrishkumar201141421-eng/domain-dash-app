@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Clock, Gift, Star, Hourglass } from "lucide-react";
 import { CATEGORY_META, countdown, relativeTime } from "@/lib/campus";
 import type { TaskWithPoster } from "@/lib/queries";
@@ -55,9 +56,7 @@ export function TaskCard({ task }: { task: TaskWithPoster }) {
       </div>
 
       <div className="mt-3 flex items-center gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
-        <span className="grid size-6 place-items-center rounded-full bg-surface text-[10px] font-bold text-surface-foreground">
-          {(task.poster?.full_name ?? "?").slice(0, 1).toUpperCase()}
-        </span>
+        <UserAvatar url={task.poster?.avatar_url} name={task.poster?.full_name} className="size-6 text-[10px]" />
         <span className="font-medium text-card-foreground">{task.poster?.full_name}</span>
         <span className="ml-auto inline-flex items-center gap-1">
           <Star className="size-3.5 fill-primary text-primary" />

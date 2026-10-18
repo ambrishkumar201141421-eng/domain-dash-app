@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
@@ -193,9 +194,7 @@ function TaskDetail() {
         </div>
 
         <div className="mt-4 flex items-center gap-2 border-t border-border pt-3 text-sm">
-          <span className="grid size-7 place-items-center rounded-full bg-surface text-xs font-bold">
-            {(task.poster?.full_name ?? "?").slice(0, 1).toUpperCase()}
-          </span>
+          <UserAvatar url={task.poster?.avatar_url} name={task.poster?.full_name} className="size-7 text-xs" />
           <span className="font-medium">{task.poster?.full_name}</span>
           <span className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground">
             <Star className="size-3.5 fill-primary text-primary" />
@@ -231,9 +230,7 @@ function TaskDetail() {
             <ul className="mt-3 space-y-2">
               {(chats ?? []).map((c) => (
                 <li key={c.id} className="flex items-center gap-2 rounded-xl bg-surface p-3">
-                  <span className="grid size-8 place-items-center rounded-full bg-card text-xs font-bold">
-                    {(c.applicant?.full_name ?? "?").slice(0, 1).toUpperCase()}
-                  </span>
+                  <UserAvatar url={c.applicant?.avatar_url} name={c.applicant?.full_name} className="size-8 text-xs" />
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{c.applicant?.full_name}</p>
                     <p className="text-xs text-muted-foreground">

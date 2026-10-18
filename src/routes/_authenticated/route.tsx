@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, LogOut, GraduationCap, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,6 +104,9 @@ function AuthedShell() {
           <div className="ml-auto flex items-center gap-2">
             <NotificationBell userId={user.id} alertsOn={Boolean(profile.notify_campus_tasks)} />
             <ThemeToggle userId={user.id} />
+            <Link to="/profile" aria-label="Your profile" className="rounded-full">
+              <UserAvatar url={profile.avatar_url} name={profile.full_name} className="size-9 text-sm" />
+            </Link>
             <button
               onClick={signOut}
               aria-label="Sign out"

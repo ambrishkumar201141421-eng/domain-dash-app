@@ -20,6 +20,7 @@ import {
 } from "@/lib/events";
 import { collegeQuery, myProfileQuery } from "@/lib/queries";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/UserAvatar";
 
 const INTRO_MAX = 160;
 type Year = (typeof COLLEGE_YEARS)[number];
@@ -41,13 +42,7 @@ export const Route = createFileRoute("/_authenticated/garba")({
 });
 
 function Avatar({ url, name, size = "size-12" }: { url?: string | null | undefined; name: string; size?: string }) {
-  return url ? (
-    <img src={url} alt="" className={cn(size, "shrink-0 rounded-full object-cover")} />
-  ) : (
-    <div className={cn(size, "grid shrink-0 place-items-center rounded-full bg-primary/15 font-bold text-primary")}>
-      {name.trim().charAt(0).toUpperCase() || "S"}
-    </div>
-  );
+  return <UserAvatar url={url} name={name} className={size} />;
 }
 
 function GarbaPage() {
@@ -294,6 +289,7 @@ function PartnerFinder({
               params={{ id: String(i.id) }}
               className="glass-card flex items-center gap-3 rounded-2xl p-3 transition hover:border-primary/40"
             >
+              <Avatar url={participantOf(i.from_user === userId ? i.to_user : i.from_user)?.student?.avatar_url} name={nameOf(i.from_user === userId ? i.to_user : i.from_user)} size="size-10" />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-semibold">{nameOf(i.from_user === userId ? i.to_user : i.from_user)}</p>
                 <p className="text-xs text-muted-foreground">Tap to open your private chat</p>
