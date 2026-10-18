@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2, Star, GraduationCap, ShieldAlert } from "lucide-react";
 import { TaskCard } from "@/components/TaskCard";
 import { NotificationSettings } from "@/components/NotificationSettings";
+import { ProfilePhotoEditor } from "@/components/ProfilePhotoEditor";
 import { myProfileQuery, myTasksQuery, ratingsForQuery, isAdminQuery, collegeQuery } from "@/lib/queries";
 import { isLive, relativeTime } from "@/lib/campus";
 
@@ -41,9 +42,9 @@ function ProfilePage() {
   return (
     <div className="space-y-5">
       <div className="glass-card rounded-2xl p-5 text-center">
-        <span className="mx-auto grid size-16 place-items-center rounded-full bg-surface text-xl font-bold">
-          {(profile?.full_name ?? "?").slice(0, 1).toUpperCase()}
-        </span>
+        {profile && (
+          <ProfilePhotoEditor userId={user.id} name={profile.full_name} current={profile.avatar_url} />
+        )}
         <h1 className="mt-3 text-xl font-bold">{profile?.full_name}</h1>
         <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
           <GraduationCap className="size-3.5 text-primary" />
