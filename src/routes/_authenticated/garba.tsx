@@ -148,7 +148,7 @@ function PartnerFinder({
 
   const respond = useMutation({
     mutationFn: async (v: { id: number; status: "accepted" | "declined" }) => {
-      const { error } = await supabase.from("event_interests").update({ status: v.status }).eq("id", v.id).eq("to_user", userId);
+      const { error } = await supabase.from("event_interests").update({ status: v.status }).eq("id", v.id).eq("to_user", userId).eq("status", "pending");
       if (error) throw error;
     },
     onSuccess: (_d, v) => {
@@ -416,7 +416,6 @@ function PartnerFinder({
                   </span>
                 </div>
                 {p.intro && <p className="text-sm text-muted-foreground">{p.intro}</p>}
-                {!mine && !link && <p className="text-xs text-muted-foreground">Join Garba Night to express interest.</p>}
               </div>
             );
           })
