@@ -158,6 +158,23 @@ function PartnerFinder({
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update"),
   });
 
+  const cancel = useMutation({
+    mutationFn: async (interestId: number) => {
+      const { error } = await supabase
+        .from("event_interests")
+        .delete()
+        .eq("id", interestId)
+        .eq("from_user", userId)
+        .eq("status", "pending");
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      invalidate();
+      toast.success("Request cancelled");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not cancel"),
+  });
+
   const leave = useMutation({
     mutationFn: async () => {
       const { error } = await supabase.from("event_participants").delete().eq("event_id", eventId).eq("user_id", userId);
