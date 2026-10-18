@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2, MessagesSquare } from "lucide-react";
 import { myChatsQuery } from "@/lib/queries";
@@ -59,9 +60,7 @@ function ChatsList() {
                   params={{ id: String(c.id) }}
                   className="glass-card flex items-center gap-3 rounded-2xl p-3"
                 >
-                  <span className="grid size-10 place-items-center rounded-full bg-surface text-sm font-bold">
-                    {(other?.full_name ?? "?").slice(0, 1).toUpperCase()}
-                  </span>
+                  <UserAvatar url={other?.avatar_url} name={other?.full_name} className="size-10 text-sm" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">{other?.full_name}</p>
                     <p className="truncate text-xs text-muted-foreground">

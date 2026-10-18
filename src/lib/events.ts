@@ -159,8 +159,8 @@ export const myInterestsQuery = (eventId: number) =>
 
 export type Connection = Interest & {
   event: { slug: string; title: string } | null;
-  from: { id: string; full_name: string } | null;
-  to: { id: string; full_name: string } | null;
+  from: { id: string; full_name: string; avatar_url: string | null } | null;
+  to: { id: string; full_name: string; avatar_url: string | null } | null;
 };
 
 export const connectionQuery = (id: number) =>
@@ -170,7 +170,7 @@ export const connectionQuery = (id: number) =>
       const { data, error } = await supabase
         .from("event_interests")
         .select(
-          "id, event_id, from_user, to_user, status, created_at, event:events(slug, title), from:profiles!event_interests_from_user_fkey(id, full_name), to:profiles!event_interests_to_user_fkey(id, full_name)",
+          "id, event_id, from_user, to_user, status, created_at, event:events(slug, title), from:profiles!event_interests_from_user_fkey(id, full_name, avatar_url), to:profiles!event_interests_to_user_fkey(id, full_name, avatar_url)",
         )
         .eq("id", id)
         .maybeSingle();

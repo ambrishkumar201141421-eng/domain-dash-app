@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Check, Loader2, Send, ShieldCheck } from "lucide-react";
@@ -112,6 +113,7 @@ function ChatRoom() {
         <Link to="/chats" className="text-muted-foreground">
           <ArrowLeft className="size-4" />
         </Link>
+        <UserAvatar url={other?.avatar_url} name={other?.full_name} className="size-9 text-sm" />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{other?.full_name}</p>
           {task ? (
