@@ -153,7 +153,7 @@ function PartnerFinder({
     },
     onSuccess: (_d, v) => {
       invalidate();
-      toast.success(v.status === "accepted" ? "Connected! You can now chat." : "Request declined");
+      toast.success(v.status === "accepted" ? "It's a match! You can now chat." : "Request declined");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update"),
   });
@@ -295,7 +295,9 @@ function PartnerFinder({
                 <p className="truncate font-semibold">{nameOf(i.from_user === userId ? i.to_user : i.from_user)}</p>
                 <p className="text-xs text-muted-foreground">Tap to open your private chat</p>
               </div>
-              <MessagesSquare className="size-5 text-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+                <MessagesSquare className="size-4" /> Chat Now
+              </span>
             </Link>
           ))}
         </section>
