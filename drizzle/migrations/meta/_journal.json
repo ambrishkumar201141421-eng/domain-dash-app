@@ -36,6 +36,13 @@
       "when": 1792167023211,
       "tag": "0004_garba_college_year",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792300386271,
+      "tag": "0005_garba_interest_notifications",
+      "breakpoints": true
     }
   ]
 }

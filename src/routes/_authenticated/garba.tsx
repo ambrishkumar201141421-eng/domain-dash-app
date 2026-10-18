@@ -112,7 +112,8 @@ function PartnerFinder({
     (interests ?? []).find(
       (i) => (i.from_user === userId && i.to_user === otherId) || (i.from_user === otherId && i.to_user === userId),
     );
-  const nameOf = (id: string) => (participants ?? []).find((p) => p.user_id === id)?.student?.full_name ?? "A student";
+  const participantOf = (id: string) => (participants ?? []).find((p) => p.user_id === id);
+  const nameOf = (id: string) => participantOf(id)?.student?.full_name ?? "A student";
   const incoming = (interests ?? []).filter((i) => i.to_user === userId && i.status === "pending");
   const accepted = (interests ?? []).filter((i) => i.status === "accepted");
 
@@ -152,9 +153,26 @@ function PartnerFinder({
     },
     onSuccess: (_d, v) => {
       invalidate();
-      toast.success(v.status === "accepted" ? "Connected! You can now chat." : "Request declined");
+      toast.success(v.status === "accepted" ? "It's a match! You can now chat." : "Request declined");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Could not update"),
+  });
+
+  const cancel = useMutation({
+    mutationFn: async (interestId: number) => {
+      const { error } = await supabase
+        .from("event_interests")
+        .delete()
+        .eq("id", interestId)
+        .eq("from_user", userId)
+        .eq("status", "pending");
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      invalidate();
+      toast.success("Request cancelled");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Could not cancel"),
   });
 
   const leave = useMutation({
@@ -218,23 +236,48 @@ function PartnerFinder({
           <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
             Wants to dance with you ({incoming.length})
           </h2>
-          {incoming.map((i) => (
-            <div key={i.id} className="glass-card flex items-center gap-3 rounded-2xl p-3">
-              <p className="min-w-0 flex-1 truncate font-semibold">{nameOf(i.from_user)}</p>
-              <Button size="sm" disabled={respond.isPending} onClick={() => respond.mutate({ id: i.id, status: "accepted" })}>
-                <Check className="size-4" /> Accept
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                aria-label="Decline"
-                disabled={respond.isPending}
-                onClick={() => respond.mutate({ id: i.id, status: "declined" })}
-              >
-                <X className="size-4" />
-              </Button>
-            </div>
-          ))}
+          {incoming.map((i) => {
+            const p = participantOf(i.from_user);
+            const name = p?.student?.full_name || "A student";
+            return (
+              <div key={i.id} className="glass-card space-y-3 rounded-2xl p-4">
+                <div className="flex items-center gap-3">
+                  <Avatar url={p?.student?.avatar_url} name={name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold">{name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {p?.college_year ?? "Year not set"} · {campus}
+                    </p>
+                  </div>
+                </div>
+                {p && (
+                  <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    {LOOKING_LABEL[p.group_pref]}
+                  </span>
+                )}
+                {p?.intro && <p className="text-sm text-muted-foreground">“{p.intro}”</p>}
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    disabled={respond.isPending}
+                    onClick={() => respond.mutate({ id: i.id, status: "accepted" })}
+                  >
+                    {respond.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />} Accept
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1"
+                    disabled={respond.isPending}
+                    onClick={() => respond.mutate({ id: i.id, status: "declined" })}
+                  >
+                    <X className="size-4" /> Decline
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
         </section>
       )}
 
@@ -252,7 +295,9 @@ function PartnerFinder({
                 <p className="truncate font-semibold">{nameOf(i.from_user === userId ? i.to_user : i.from_user)}</p>
                 <p className="text-xs text-muted-foreground">Tap to open your private chat</p>
               </div>
-              <MessagesSquare className="size-5 text-primary" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+                <MessagesSquare className="size-4" /> Chat Now
+              </span>
             </Link>
           ))}
         </section>
@@ -297,23 +342,37 @@ function PartnerFinder({
                     <p className="text-xs text-muted-foreground">{campus}</p>
                   </div>
                   {link ? (
-                    <span
-                      className={cn(
-                        "rounded-full px-3 py-1.5 text-xs font-semibold",
-                        link.status === "accepted" ? "bg-primary/10 text-primary" : "bg-surface text-muted-foreground",
-                      )}
-                    >
-                      {link.status === "accepted"
-                        ? "Connected"
-                        : link.status === "declined"
-                          ? "Declined"
-                          : link.from_user === userId
-                            ? "Pending"
-                            : "Wants to connect"}
-                    </span>
+                    link.status === "pending" && link.from_user === userId ? (
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <span className="rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                          Request Sent
+                        </span>
+                        <button
+                          type="button"
+                          disabled={cancel.isPending}
+                          onClick={() => cancel.mutate(link.id)}
+                          className="text-xs font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : link.status === "accepted" ? (
+                      <Link
+                        to="/connections/$id"
+                        params={{ id: String(link.id) }}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+                      >
+                        <MessagesSquare className="size-4" /> Chat Now
+                      </Link>
+                    ) : (
+                      <span className="shrink-0 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {link.status === "declined" ? "Declined" : "Wants to connect"}
+                      </span>
+                    )
                   ) : mine ? (
                     <Button size="sm" variant="outline" disabled={connect.isPending} onClick={() => connect.mutate(p.user_id)}>
-                      <Heart className="size-4" /> Express Interest
+                      {connect.isPending ? <Loader2 className="size-4 animate-spin" /> : <Heart className="size-4" />}
+                      I'm Interested
                     </Button>
                   ) : null}
                 </div>
