@@ -148,7 +148,7 @@ function PartnerFinder({
 
   const respond = useMutation({
     mutationFn: async (v: { id: number; status: "accepted" | "declined" }) => {
-      const { error } = await supabase.from("event_interests").update({ status: v.status }).eq("id", v.id).eq("to_user", userId);
+      const { error } = await supabase.from("event_interests").update({ status: v.status }).eq("id", v.id).eq("to_user", userId).eq("status", "pending");
       if (error) throw error;
     },
     onSuccess: (_d, v) => {
@@ -233,8 +233,9 @@ function PartnerFinder({
 
       {incoming.length > 0 && (
         <section className="space-y-2">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            Wants to dance with you ({incoming.length})
+          <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+            Interest Requests
+            <span className="rounded-full bg-primary px-2 py-0.5 text-xs text-primary-foreground">{incoming.length}</span>
           </h2>
           {incoming.map((i) => {
             const p = participantOf(i.from_user);
@@ -283,7 +284,9 @@ function PartnerFinder({
 
       {accepted.length > 0 && (
         <section className="space-y-2">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Your connections</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+            My Matches / My Chats ({accepted.length})
+          </h2>
           {accepted.map((i) => (
             <Link
               key={i.id}
@@ -356,6 +359,21 @@ function PartnerFinder({
                           Cancel
                         </button>
                       </div>
+                    ) : link.status === "pending" ? (
+                      <div className="flex shrink-0 gap-1.5">
+                        <Button size="sm" disabled={respond.isPending} onClick={() => respond.mutate({ id: link.id, status: "accepted" })}>
+                          <Check className="size-4" /> Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          aria-label="Decline"
+                          disabled={respond.isPending}
+                          onClick={() => respond.mutate({ id: link.id, status: "declined" })}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </div>
                     ) : link.status === "accepted" ? (
                       <Link
                         to="/connections/$id"
@@ -366,15 +384,28 @@ function PartnerFinder({
                       </Link>
                     ) : (
                       <span className="shrink-0 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
-                        {link.status === "declined" ? "Declined" : "Wants to connect"}
+                        Declined
                       </span>
                     )
-                  ) : mine ? (
-                    <Button size="sm" variant="outline" disabled={connect.isPending} onClick={() => connect.mutate(p.user_id)}>
-                      {connect.isPending ? <Loader2 className="size-4 animate-spin" /> : <Heart className="size-4" />}
+                  ) : (
+                    <Button
+                      size="sm"
+                      disabled={connect.isPending && connect.variables === p.user_id}
+                      onClick={() =>
+                        mine
+                          ? connect.mutate(p.user_id)
+                          : (toast.info("Join Garba Night first so they can see who you are"),
+                            document.getElementById("join")?.scrollIntoView({ behavior: "smooth" }))
+                      }
+                    >
+                      {connect.isPending && connect.variables === p.user_id ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        <Heart className="size-4 fill-current" />
+                      )}
                       I'm Interested
                     </Button>
-                  ) : null}
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {p.college_year && (
@@ -385,7 +416,6 @@ function PartnerFinder({
                   </span>
                 </div>
                 {p.intro && <p className="text-sm text-muted-foreground">{p.intro}</p>}
-                {!mine && !link && <p className="text-xs text-muted-foreground">Join Garba Night to express interest.</p>}
               </div>
             );
           })
