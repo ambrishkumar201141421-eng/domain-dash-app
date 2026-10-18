@@ -236,23 +236,48 @@ function PartnerFinder({
           <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
             Wants to dance with you ({incoming.length})
           </h2>
-          {incoming.map((i) => (
-            <div key={i.id} className="glass-card flex items-center gap-3 rounded-2xl p-3">
-              <p className="min-w-0 flex-1 truncate font-semibold">{nameOf(i.from_user)}</p>
-              <Button size="sm" disabled={respond.isPending} onClick={() => respond.mutate({ id: i.id, status: "accepted" })}>
-                <Check className="size-4" /> Accept
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                aria-label="Decline"
-                disabled={respond.isPending}
-                onClick={() => respond.mutate({ id: i.id, status: "declined" })}
-              >
-                <X className="size-4" />
-              </Button>
-            </div>
-          ))}
+          {incoming.map((i) => {
+            const p = participantOf(i.from_user);
+            const name = p?.student?.full_name || "A student";
+            return (
+              <div key={i.id} className="glass-card space-y-3 rounded-2xl p-4">
+                <div className="flex items-center gap-3">
+                  <Avatar url={p?.student?.avatar_url} name={name} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-semibold">{name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {p?.college_year ?? "Year not set"} · {campus}
+                    </p>
+                  </div>
+                </div>
+                {p && (
+                  <span className="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
+                    {LOOKING_LABEL[p.group_pref]}
+                  </span>
+                )}
+                {p?.intro && <p className="text-sm text-muted-foreground">“{p.intro}”</p>}
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    disabled={respond.isPending}
+                    onClick={() => respond.mutate({ id: i.id, status: "accepted" })}
+                  >
+                    {respond.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />} Accept
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1"
+                    disabled={respond.isPending}
+                    onClick={() => respond.mutate({ id: i.id, status: "declined" })}
+                  >
+                    <X className="size-4" /> Decline
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
         </section>
       )}
 
