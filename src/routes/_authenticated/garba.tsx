@@ -112,7 +112,8 @@ function PartnerFinder({
     (interests ?? []).find(
       (i) => (i.from_user === userId && i.to_user === otherId) || (i.from_user === otherId && i.to_user === userId),
     );
-  const nameOf = (id: string) => (participants ?? []).find((p) => p.user_id === id)?.student?.full_name ?? "A student";
+  const participantOf = (id: string) => (participants ?? []).find((p) => p.user_id === id);
+  const nameOf = (id: string) => participantOf(id)?.student?.full_name ?? "A student";
   const incoming = (interests ?? []).filter((i) => i.to_user === userId && i.status === "pending");
   const accepted = (interests ?? []).filter((i) => i.status === "accepted");
 
