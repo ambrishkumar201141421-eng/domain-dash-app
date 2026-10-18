@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 // Some visitors land on /index directly; send them to the real home page.
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/index_")({
   beforeLoad: () => {
-    throw redirect({ to: "/" });
+    throw redirect({ href: "/" });
   },
 });
