@@ -50,6 +50,7 @@ export function NotificationBell({ userId, alertsOn }: { userId: string; alertsO
       qc.invalidateQueries({ queryKey: ["notifications", userId] });
     }
     if (n.task_id) navigate({ to: "/task/$id", params: { id: String(n.task_id) } });
+    else if (n.type.startsWith("garba_")) navigate({ to: "/garba" });
   }
 
   async function markAll() {
