@@ -342,23 +342,37 @@ function PartnerFinder({
                     <p className="text-xs text-muted-foreground">{campus}</p>
                   </div>
                   {link ? (
-                    <span
-                      className={cn(
-                        "rounded-full px-3 py-1.5 text-xs font-semibold",
-                        link.status === "accepted" ? "bg-primary/10 text-primary" : "bg-surface text-muted-foreground",
-                      )}
-                    >
-                      {link.status === "accepted"
-                        ? "Connected"
-                        : link.status === "declined"
-                          ? "Declined"
-                          : link.from_user === userId
-                            ? "Pending"
-                            : "Wants to connect"}
-                    </span>
+                    link.status === "pending" && link.from_user === userId ? (
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <span className="rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                          Request Sent
+                        </span>
+                        <button
+                          type="button"
+                          disabled={cancel.isPending}
+                          onClick={() => cancel.mutate(link.id)}
+                          className="text-xs font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : link.status === "accepted" ? (
+                      <Link
+                        to="/connections/$id"
+                        params={{ id: String(link.id) }}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+                      >
+                        <MessagesSquare className="size-4" /> Chat Now
+                      </Link>
+                    ) : (
+                      <span className="shrink-0 rounded-full bg-surface px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                        {link.status === "declined" ? "Declined" : "Wants to connect"}
+                      </span>
+                    )
                   ) : mine ? (
                     <Button size="sm" variant="outline" disabled={connect.isPending} onClick={() => connect.mutate(p.user_id)}>
-                      <Heart className="size-4" /> Express Interest
+                      {connect.isPending ? <Loader2 className="size-4 animate-spin" /> : <Heart className="size-4" />}
+                      I'm Interested
                     </Button>
                   ) : null}
                 </div>
