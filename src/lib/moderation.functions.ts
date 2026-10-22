@@ -1,14 +1,36 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { scanText } from "@/lib/moderation";
+import {
+  CATEGORIES,
+  SUBCATEGORIES,
+  type Category,
+  type Compensation,
+  type GroupPref,
+  type ListingType,
+} from "@/lib/campus";
 
 type CreateTaskInput = {
   title: string;
   description: string | null;
-  category: "Hustle" | "Playground" | "Lounge";
+  category: Category;
   reward: string;
   expiresAt: string | null;
+  subcategory?: string | null;
+  listingType?: ListingType | null;
+  compensation?: Compensation | null;
+  groupPref?: GroupPref | null;
+  groupSize?: number | null;
+  plannedFor?: string | null;
+  locationNote?: string | null;
 };
+
+/** Reward is required for help tasks and paid/exchange gigs; optional for sports and hangouts. */
+export function rewardRequired(category: Category, compensation?: Compensation | null) {
+  if (category === "Hustle") return true;
+  if (category === "Gigs") return compensation !== "unpaid";
+  return false;
+}
 
 export class ModerationError extends Error {
   terms: string[];
@@ -30,8 +52,16 @@ export class ModerationError extends Error {
 export const createTaskChecked = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: CreateTaskInput) => {
+    if (!CATEGORIES.includes(input.category)) throw new Error("Pick a section");
     if (!input.title?.trim()) throw new Error("A title is required");
-    if (!input.reward?.trim()) throw new Error("A reward is required");
+    if (input.category === "Gigs" && !input.compensation) throw new Error("Choose paid, unpaid or skill exchange");
+    if (rewardRequired(input.category, input.compensation) && !input.reward?.trim())
+      throw new Error("Add the reward or what you offer in return");
+    if (input.subcategory && !SUBCATEGORIES[input.category].includes(input.subcategory))
+      throw new Error("Pick a type from the list");
+    if (input.groupSize != null && (input.groupSize < 2 || input.groupSize > 50))
+      throw new Error("Group size must be between 2 and 50");
+    if ((input.locationNote ?? "").length > 80) throw new Error("Keep the meeting spot short");
     return input;
   })
   .handler(async ({ data, context }) => {
@@ -56,10 +86,10 @@ export const createTaskChecked = createServerFn({ method: "POST" })
       };
     }
 
-    const terms = scanText(data.title, data.description, data.reward);
+    const terms = scanText(data.title, data.description, data.reward ?? "", data.locationNote ?? "");
     if (terms.length > 0) {
       const { data: updated, error } = await supabase.rpc("record_violation", {
-        p_content: [data.title, data.description ?? "", data.reward].join(" | "),
+        p_content: [data.title, data.description ?? "", data.reward ?? "", data.locationNote ?? ""].join(" | "),
         p_terms: terms,
         p_context: "task",
       });
@@ -80,8 +110,20 @@ export const createTaskChecked = createServerFn({ method: "POST" })
         title: data.title.trim(),
         description: data.description?.trim() || null,
         category: data.category,
-        reward: data.reward.trim(),
+        reward: (data.reward ?? "").trim(),
         expires_at: data.expiresAt,
+        subcategory: data.subcategory || null,
+        listing_type: data.category === "Gigs" ? (data.listingType ?? "request") : null,
+        compensation: data.category === "Gigs" ? (data.compensation ?? null) : null,
+        group_pref: data.category === "Playground" ? (data.groupPref ?? "either") : null,
+        group_size:
+          data.category === "Playground" && data.groupPref === "partner"
+            ? 2
+            : data.category === "Playground" || data.category === "Lounge"
+              ? (data.groupSize ?? null)
+              : null,
+        planned_for: data.plannedFor || null,
+        location_note: data.locationNote?.trim() || null,
       })
       .select("id")
       .single();

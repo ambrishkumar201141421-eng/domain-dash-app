@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import type { Category, Compensation, GroupPref, ListingType } from "@/lib/campus";
 
 export type AccountStatus = "active" | "in_verification" | "permanently_banned";
 
@@ -21,8 +22,15 @@ export type Task = {
   poster_id: string;
   title: string;
   description: string | null;
-  category: "Hustle" | "Playground" | "Lounge";
+  category: Category;
   reward: string;
+  subcategory: string | null;
+  listing_type: ListingType | null;
+  compensation: Compensation | null;
+  group_pref: GroupPref | null;
+  group_size: number | null;
+  planned_for: string | null;
+  location_note: string | null;
   status: "Open" | "Accepted" | "Completed" | "Expired" | "Cancelled";
   helper_id: string | null;
   created_at: string;
@@ -34,7 +42,7 @@ export type Task = {
 export type TaskWithPoster = Task & { poster: Profile | null; helper: Profile | null };
 
 const TASK_COLUMNS =
-  "id, poster_id, title, description, category, reward, status, helper_id, created_at, expires_at, accepted_at, completed_at, poster:profiles!tasks_poster_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url), helper:profiles!tasks_helper_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url)";
+  "id, poster_id, title, description, category, reward, subcategory, listing_type, compensation, group_pref, group_size, planned_for, location_note, status, helper_id, created_at, expires_at, accepted_at, completed_at, poster:profiles!tasks_poster_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url), helper:profiles!tasks_helper_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url)";
 
 export const myProfileQuery = (fullName: string) =>
   queryOptions({
@@ -121,7 +129,7 @@ export const feedQuery = queryOptions({
       .select(TASK_COLUMNS)
       .eq("status", "Open")
       .order("created_at", { ascending: false })
-      .limit(100);
+      .limit(300);
     if (error) throw error;
     return (data ?? []) as unknown as TaskWithPoster[];
   },
@@ -156,19 +164,23 @@ export const myTasksQuery = (userId: string) =>
     },
   });
 
+export type ChatStatus = "Pending" | "Accepted" | "Declined" | "Withdrawn";
+
 export type Chat = {
   id: number;
   task_id: number;
   poster_id: string;
   applicant_id: string;
-  status: string;
+  status: ChatStatus;
   created_at: string;
+  responded_at: string | null;
+  task?: { id: number; title: string; category: Category } | null;
   applicant: Profile | null;
   poster: Profile | null;
 };
 
 const CHAT_COLUMNS =
-  "id, task_id, poster_id, applicant_id, status, created_at, applicant:profiles!chats_applicant_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url), poster:profiles!chats_poster_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url)";
+  "id, task_id, poster_id, applicant_id, status, created_at, responded_at, task:tasks!chats_task_id_fkey(id, title, category), applicant:profiles!chats_applicant_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url), poster:profiles!chats_poster_id_fkey(id, full_name, college_domain, rating, ratings_count, avatar_url)";
 
 export const taskChatsQuery = (taskId: number) =>
   queryOptions({
