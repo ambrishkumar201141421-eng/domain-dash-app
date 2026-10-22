@@ -1,33 +1,140 @@
-export type Category = "Hustle" | "Playground" | "Lounge";
+export type Category = "Hustle" | "Playground" | "Lounge" | "Gigs";
 
-export const CATEGORIES: Category[] = ["Hustle", "Playground", "Lounge"];
+export const CATEGORIES: Category[] = ["Hustle", "Playground", "Lounge", "Gigs"];
+
+/** Posts in these sections use "I'm Interested" → organiser accepts → private chat unlocks. */
+export const REQUEST_MODE: Category[] = ["Playground", "Lounge", "Gigs"];
+export function isRequestMode(category: Category) {
+  return REQUEST_MODE.includes(category);
+}
 
 export const CATEGORY_META: Record<
   Category,
-  { label: string; blurb: string; text: string; chip: string; ring: string }
+  { label: string; blurb: string; text: string; chip: string; ring: string; anchor: string }
 > = {
   Hustle: {
-    label: "Hustle",
-    blurb: "Errands, gate parcel pickups, printing runs, assignment support",
+    label: "Campus Help",
+    blurb: "Parcel pickups, errands, notes, assignments, coding or design help",
     text: "text-hustle",
     chip: "bg-hustle-soft text-hustle",
     ring: "border-hustle",
+    anchor: "help",
   },
   Playground: {
-    label: "Playground",
-    blurb: "Football, badminton, chess, board games — find a partner",
+    label: "Sports",
+    blurb: "Find a partner or a group for badminton, cricket, gym, treks and more",
     text: "text-playground",
     chip: "bg-playground-soft text-playground",
     ring: "border-playground",
+    anchor: "sports",
   },
   Lounge: {
-    label: "Lounge",
-    blurb: "Night walks, canteen chai runs, study groups",
+    label: "Hangouts",
+    blurb: "Chai runs, food, walks, movies, outings and study groups",
     text: "text-lounge",
     chip: "bg-lounge-soft text-lounge",
     ring: "border-lounge",
+    anchor: "hangouts",
+  },
+  Gigs: {
+    label: "Student Hustle",
+    blurb: "Paid gigs, services you offer and skill exchanges",
+    text: "text-gigs",
+    chip: "bg-gigs-soft text-gigs",
+    ring: "border-gigs",
+    anchor: "hustles",
   },
 };
+
+export const SUBCATEGORIES: Record<Category, string[]> = {
+  Hustle: [
+    "Parcel & delivery",
+    "Assignments",
+    "Notes & study material",
+    "Shopping & errands",
+    "Coding & tech",
+    "Design & presentations",
+    "Other",
+  ],
+  Playground: [
+    "Badminton",
+    "Cricket",
+    "Football",
+    "Basketball",
+    "Volleyball",
+    "Running",
+    "Gym & fitness",
+    "Trekking",
+    "Cycling",
+    "Table tennis",
+    "Board games",
+    "Other",
+  ],
+  Lounge: [
+    "Food & chai",
+    "Exploring nearby",
+    "Campus walk",
+    "Movie outing",
+    "Group outing",
+    "College activity",
+    "Study group",
+    "Other",
+  ],
+  Gigs: [
+    "Design & posters",
+    "Presentations & docs",
+    "Coding",
+    "Tutoring",
+    "Photo & video",
+    "Content writing",
+    "Notes exchange",
+    "Small campus gig",
+    "Other",
+  ],
+};
+
+export type Compensation = "paid" | "unpaid" | "exchange";
+export const COMPENSATION_LABEL: Record<Compensation, string> = {
+  paid: "Paid",
+  unpaid: "Unpaid help",
+  exchange: "Skill exchange",
+};
+
+export type ListingType = "request" | "offer";
+export const LISTING_LABEL: Record<ListingType, string> = {
+  request: "Looking for someone",
+  offer: "Offering my skills",
+};
+
+export type GroupPref = "partner" | "group" | "either";
+export const GROUP_PREF_LABEL: Record<GroupPref, string> = {
+  partner: "1-on-1 partner",
+  group: "Group",
+  either: "Partner or group",
+};
+
+export const TIME_SLOTS = ["Morning", "Afternoon", "Evening", "Night"] as const;
+export type TimeSlot = (typeof TIME_SLOTS)[number];
+
+export function timeSlotOf(iso: string | null | undefined): TimeSlot | null {
+  if (!iso) return null;
+  const h = new Date(iso).getHours();
+  if (h >= 5 && h < 12) return "Morning";
+  if (h >= 12 && h < 17) return "Afternoon";
+  if (h >= 17 && h < 21) return "Evening";
+  return "Night";
+}
+
+export function formatPlanned(iso: string | null | undefined) {
+  if (!iso) return null;
+  return new Date(iso).toLocaleString("en-IN", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
 
 const COLLEGE_EMAIL = /^[^\s@]+@[^\s@]+\.(edu|edu\.[a-z]{2}|ac\.[a-z]{2})$/i;
 
@@ -68,4 +175,10 @@ export function isLive(task: { status: string; expires_at: string | null }) {
   if (task.status !== "Open") return false;
   if (!task.expires_at) return true;
   return new Date(task.expires_at).getTime() > Date.now();
+}
+
+/** Events listed on the homepage: published, live, and not already over. */
+export function isUpcomingEvent(e: { ends_at: string | null; starts_at: string | null }) {
+  const end = e.ends_at ?? e.starts_at;
+  return !end || new Date(end).getTime() > Date.now();
 }
