@@ -139,7 +139,7 @@ function ChatsList() {
                     <UserAvatar url={other?.avatar_url} name={other?.full_name} className="size-10 text-sm" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold">{other?.full_name}</p>
-                      <p className="truncate text-xs text-muted-foreground">Garba Night match</p>
+                      <p className="truncate text-xs text-muted-foreground">Event match</p>
                     </div>
                     <span className="text-[11px] text-muted-foreground">{relativeTime(c.created_at)}</span>
                   </Link>

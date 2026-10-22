@@ -29,7 +29,7 @@ type Pref = (typeof GROUP_PREFS)[number];
 export const Route = createFileRoute("/_authenticated/garba")({
   head: () => ({
     meta: [
-      { title: "Garba Night — Find Your Garba Partner | Campus Hustle" },
+      { title: "Garba Night (ended) — Campus Hustle" },
       { name: "description", content: GARBA_COPY },
       { property: "og:title", content: "Garba Night — Find Your Garba Partner" },
       { property: "og:description", content: GARBA_COPY },
@@ -54,6 +54,26 @@ function GarbaPage() {
   const campus = college?.short_name ?? profile?.college_domain ?? "your campus";
 
   if (isLoading) return <Loader2 className="mx-auto mt-16 size-5 animate-spin text-primary" />;
+
+  if (!event) {
+    return (
+      <div className="glass-card space-y-3 rounded-2xl p-6 text-center">
+        <p className="font-display text-lg font-bold">Garba Night has ended</p>
+        <p className="text-sm text-muted-foreground">
+          Thanks for joining in! New sign-ups and partner requests are closed. Your matches and
+          conversations are still saved in Chats.
+        </p>
+        <div className="flex justify-center gap-2 pt-1">
+          <Button asChild size="sm">
+            <Link to="/chats">Open my chats</Link>
+          </Button>
+          <Button asChild size="sm" variant="secondary">
+            <Link to="/">Back to home</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
