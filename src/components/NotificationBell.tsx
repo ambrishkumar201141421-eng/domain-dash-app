@@ -25,15 +25,21 @@ export function NotificationBell({ userId, alertsOn }: { userId: string; alertsO
           qc.invalidateQueries({ queryKey: ["notifications", userId] });
           const n = payload.new as AppNotification;
           if (alertsOn && browserAlertsSupported() && Notification.permission === "granted") {
-            const alert = new Notification("New task on your campus 🎯", {
-              body: `${n.title}${n.reward ? ` · ${n.reward}` : ""}`,
+            const heading =
+              n.type === "post_request"
+                ? "New request on your post"
+                : n.type === "request_accepted"
+                  ? "Your request was accepted"
+                  : "New post on your campus 🎯";
+            const alert = new Notification(heading, {
+              body: n.type === "campus_task" ? `${n.title}${n.reward ? ` · ${n.reward}` : ""}` : `${n.title} · ${n.message ?? ""}`,
               tag: `task-${n.task_id}`,
             });
             alert.onclick = () => {
               window.focus();
               void markRead([n.id]).then(() => qc.invalidateQueries({ queryKey: ["notifications", userId] }));
               if (n.task_id) navigate({ to: "/task/$id", params: { id: String(n.task_id) } });
-              else if (n.type.startsWith("garba_")) navigate({ to: "/garba" });
+              else if (n.type.startsWith("garba_")) navigate({ to: "/chats" });
             };
           }
         },
@@ -51,7 +57,7 @@ export function NotificationBell({ userId, alertsOn }: { userId: string; alertsO
       qc.invalidateQueries({ queryKey: ["notifications", userId] });
     }
     if (n.task_id) navigate({ to: "/task/$id", params: { id: String(n.task_id) } });
-    else if (n.type.startsWith("garba_")) navigate({ to: "/garba" });
+    else if (n.type.startsWith("garba_")) navigate({ to: "/chats" });
   }
 
   async function markAll() {

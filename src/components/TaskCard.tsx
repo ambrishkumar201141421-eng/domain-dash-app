@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { UserAvatar } from "@/components/UserAvatar";
-import { Clock, Gift, Star, Hourglass } from "lucide-react";
+import { ArrowRight, Clock, Gift, Star, Hourglass } from "lucide-react";
 import { CATEGORY_META, countdown, relativeTime } from "@/lib/campus";
 import type { TaskWithPoster } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 
-export function TaskCard({ task }: { task: TaskWithPoster }) {
+export function TaskCard({ task, isMine }: { task: TaskWithPoster; isMine?: boolean }) {
   const meta = CATEGORY_META[task.category];
   const timer = task.status === "Open" ? countdown(task.expires_at) : null;
 
@@ -22,7 +22,7 @@ export function TaskCard({ task }: { task: TaskWithPoster }) {
             meta.chip,
           )}
         >
-          {meta.label}
+          {task.subcategory ?? meta.label}
         </span>
         <span className="flex items-center gap-1 text-xs text-muted-foreground">
           <Clock className="size-3.5" />
@@ -38,10 +38,12 @@ export function TaskCard({ task }: { task: TaskWithPoster }) {
       ) : null}
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium text-surface-foreground">
-          <Gift className="size-3.5 text-primary" />
-          {task.reward}
-        </span>
+        {task.reward ? (
+          <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium text-surface-foreground">
+            <Gift className="size-3.5 text-primary" />
+            {task.reward}
+          </span>
+        ) : null}
         {timer ? (
           <span
             className={cn(
@@ -58,10 +60,15 @@ export function TaskCard({ task }: { task: TaskWithPoster }) {
       <div className="mt-3 flex items-center gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
         <UserAvatar url={task.poster?.avatar_url} name={task.poster?.full_name} className="size-6 text-[10px]" />
         <span className="font-medium text-card-foreground">{task.poster?.full_name}</span>
-        <span className="ml-auto inline-flex items-center gap-1">
+        <span className="inline-flex items-center gap-1">
           <Star className="size-3.5 fill-primary text-primary" />
           {(task.poster?.rating ?? 5).toFixed(1)}
         </span>
+        {task.status === "Open" ? (
+          <span className="ml-auto inline-flex items-center gap-1 rounded-lg bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
+            {isMine ? "View" : "Offer help"} <ArrowRight className="size-3.5" />
+          </span>
+        ) : null}
       </div>
     </Link>
   );

@@ -42,6 +42,10 @@
   --color-playground-soft: var(--playground-soft);
   --color-lounge: var(--lounge);
   --color-lounge-soft: var(--lounge-soft);
+  --color-gigs: var(--gigs);
+  --color-gigs-soft: var(--gigs-soft);
+  --color-scrim: var(--scrim);
+  --color-on-scrim: var(--on-scrim);
   --color-urgent: var(--urgent);
   --color-surface: var(--surface);
   --color-surface-foreground: var(--surface-foreground);
@@ -78,6 +82,10 @@
   --playground-soft: oklch(0.35 0.06 205);
   --lounge: oklch(0.82 0.14 340);
   --lounge-soft: oklch(0.36 0.07 340);
+  --gigs: oklch(0.8 0.13 265);
+  --gigs-soft: oklch(0.34 0.07 265);
+  --scrim: oklch(0.14 0.02 258);
+  --on-scrim: oklch(0.98 0.005 250);
   --urgent: oklch(0.72 0.2 22);
 }
 
@@ -110,6 +118,8 @@ html.light {
   --playground-soft: oklch(0.93 0.04 205);
   --lounge: oklch(0.55 0.17 345);
   --lounge-soft: oklch(0.94 0.04 340);
+  --gigs: oklch(0.5 0.16 265);
+  --gigs-soft: oklch(0.94 0.035 265);
   --urgent: oklch(0.56 0.21 25);
   color-scheme: light;
 }

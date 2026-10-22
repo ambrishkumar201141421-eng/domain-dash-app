@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: number
           poster_id: string
+          responded_at: string | null
           status: string
           task_id: number
         }
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string
           id?: never
           poster_id: string
+          responded_at?: string | null
           status?: string
           task_id: number
         }
@@ -36,6 +38,7 @@ export type Database = {
           created_at?: string
           id?: never
           poster_id?: string
+          responded_at?: string | null
           status?: string
           task_id?: number
         }
@@ -563,46 +566,67 @@ export type Database = {
         Row: {
           accepted_at: string | null
           category: Database["public"]["Enums"]["task_category"]
+          compensation: string | null
           completed_at: string | null
           created_at: string
           description: string | null
           expires_at: string | null
+          group_pref: string | null
+          group_size: number | null
           handshake_pin: number | null
           helper_id: string | null
           id: number
+          listing_type: string | null
+          location_note: string | null
+          planned_for: string | null
           poster_id: string
           reward: string
           status: Database["public"]["Enums"]["task_status"]
+          subcategory: string | null
           title: string
         }
         Insert: {
           accepted_at?: string | null
           category: Database["public"]["Enums"]["task_category"]
+          compensation?: string | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
           expires_at?: string | null
+          group_pref?: string | null
+          group_size?: number | null
           handshake_pin?: number | null
           helper_id?: string | null
           id?: never
+          listing_type?: string | null
+          location_note?: string | null
+          planned_for?: string | null
           poster_id: string
           reward: string
           status?: Database["public"]["Enums"]["task_status"]
+          subcategory?: string | null
           title: string
         }
         Update: {
           accepted_at?: string | null
           category?: Database["public"]["Enums"]["task_category"]
+          compensation?: string | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
           expires_at?: string | null
+          group_pref?: string | null
+          group_size?: number | null
           handshake_pin?: number | null
           helper_id?: string | null
           id?: never
+          listing_type?: string | null
+          location_note?: string | null
+          planned_for?: string | null
           poster_id?: string
           reward?: string
           status?: Database["public"]["Enums"]["task_status"]
+          subcategory?: string | null
           title?: string
         }
         Relationships: [
@@ -649,6 +673,7 @@ export type Database = {
     }
     Functions: {
       accept_applicant: { Args: { p_chat_id: number }; Returns: undefined }
+      can_message_chat: { Args: { p_chat_id: number }; Returns: boolean }
       complete_task: {
         Args: { p_pin: number; p_task_id: number }
         Returns: boolean
@@ -717,17 +742,23 @@ export type Database = {
         Args: { p_context?: string; p_reason: string; p_user_id: string }
         Returns: undefined
       }
+      request_to_join: { Args: { p_task_id: number }; Returns: number }
+      respond_to_request: {
+        Args: { p_accept: boolean; p_chat_id: number }
+        Returns: undefined
+      }
       review_flag: {
         Args: { p_flag_id: number; p_guilty: boolean }
         Returns: undefined
       }
+      withdraw_request: { Args: { p_chat_id: number }; Returns: undefined }
     }
     Enums: {
       account_status: "active" | "in_verification" | "permanently_banned"
       app_role: "admin" | "moderator" | "user"
       event_status: "draft" | "published" | "archived"
       flag_review_status: "pending" | "guilty" | "cleared"
-      task_category: "Hustle" | "Playground" | "Lounge"
+      task_category: "Hustle" | "Playground" | "Lounge" | "Gigs"
       task_status: "Open" | "Accepted" | "Completed" | "Expired" | "Cancelled"
     }
     CompositeTypes: {
@@ -860,7 +891,7 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       event_status: ["draft", "published", "archived"],
       flag_review_status: ["pending", "guilty", "cleared"],
-      task_category: ["Hustle", "Playground", "Lounge"],
+      task_category: ["Hustle", "Playground", "Lounge", "Gigs"],
       task_status: ["Open", "Accepted", "Completed", "Expired", "Cancelled"],
     },
   },
