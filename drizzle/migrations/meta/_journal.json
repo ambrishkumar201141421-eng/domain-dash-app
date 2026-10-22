@@ -64,6 +64,13 @@
       "when": 1792664182094,
       "tag": "0008_add_gigs_task_category",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792664266125,
+      "tag": "0009_homepage_sections_requests",
+      "breakpoints": true
     }
   ]
 }
