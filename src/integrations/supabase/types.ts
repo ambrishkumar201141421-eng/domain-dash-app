@@ -727,7 +727,7 @@ export type Database = {
       app_role: "admin" | "moderator" | "user"
       event_status: "draft" | "published" | "archived"
       flag_review_status: "pending" | "guilty" | "cleared"
-      task_category: "Hustle" | "Playground" | "Lounge"
+      task_category: "Hustle" | "Playground" | "Lounge" | "Gigs"
       task_status: "Open" | "Accepted" | "Completed" | "Expired" | "Cancelled"
     }
     CompositeTypes: {
@@ -860,7 +860,7 @@ export const Constants = {
       app_role: ["admin", "moderator", "user"],
       event_status: ["draft", "published", "archived"],
       flag_review_status: ["pending", "guilty", "cleared"],
-      task_category: ["Hustle", "Playground", "Lounge"],
+      task_category: ["Hustle", "Playground", "Lounge", "Gigs"],
       task_status: ["Open", "Accepted", "Completed", "Expired", "Cancelled"],
     },
   },

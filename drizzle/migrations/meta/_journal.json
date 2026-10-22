@@ -57,6 +57,13 @@
       "when": 1792301334927,
       "tag": "0007_avatar_storage_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1792664182094,
+      "tag": "0008_add_gigs_task_category",
+      "breakpoints": true
     }
   ]
 }

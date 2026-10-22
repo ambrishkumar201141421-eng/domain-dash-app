@@ -1,0 +1,1 @@
+ALTER TYPE public.task_category ADD VALUE IF NOT EXISTS 'Gigs';
