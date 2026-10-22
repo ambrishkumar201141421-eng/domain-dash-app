@@ -4,6 +4,7 @@ import { scanText } from "@/lib/moderation";
 import {
   CATEGORIES,
   SUBCATEGORIES,
+  rewardRequired,
   type Category,
   type Compensation,
   type GroupPref,
@@ -25,12 +26,6 @@ type CreateTaskInput = {
   locationNote?: string | null;
 };
 
-/** Reward is required for help tasks and paid/exchange gigs; optional for sports and hangouts. */
-export function rewardRequired(category: Category, compensation?: Compensation | null) {
-  if (category === "Hustle") return true;
-  if (category === "Gigs") return compensation !== "unpaid";
-  return false;
-}
 
 export class ModerationError extends Error {
   terms: string[];

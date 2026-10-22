@@ -100,6 +100,19 @@ export const COMPENSATION_LABEL: Record<Compensation, string> = {
   exchange: "Skill exchange",
 };
 
+/** Reward is required for help tasks and paid/exchange gigs; optional for sports, hangouts and unpaid help. */
+export function rewardRequired(category: Category, compensation?: Compensation | null) {
+  if (category === "Hustle") return true;
+  if (category === "Gigs") return compensation !== "unpaid";
+  return false;
+}
+
+/** Spots left for a group post, counting the organiser. Null means no limit. */
+export function spotsLeft(groupSize: number | null | undefined, acceptedCount: number) {
+  if (!groupSize) return null;
+  return Math.max(0, groupSize - 1 - acceptedCount);
+}
+
 export type ListingType = "request" | "offer";
 export const LISTING_LABEL: Record<ListingType, string> = {
   request: "Looking for someone",
