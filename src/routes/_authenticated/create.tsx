@@ -31,8 +31,8 @@ type CreateSearch = { category?: Category };
 
 export const Route = createFileRoute("/_authenticated/create")({
   validateSearch: (s: Record<string, unknown>): CreateSearch =>
-    typeof s.category === "string" && (CATEGORIES as string[]).includes(s.category)
-      ? { category: s.category as Category }
+    typeof s["category"] === "string" && (CATEGORIES as string[]).includes(s["category"])
+      ? { category: s["category"] as Category }
       : {},
   head: () => ({
     meta: [
