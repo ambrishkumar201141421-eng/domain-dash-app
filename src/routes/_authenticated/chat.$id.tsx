@@ -2,13 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { UserAvatar } from "@/components/UserAvatar";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Check, Loader2, Send, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, Loader2, Lock, Send, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { chatQuery, messagesQuery, taskQuery } from "@/lib/queries";
-import { relativeTime } from "@/lib/campus";
+import { isRequestMode, relativeTime } from "@/lib/campus";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/chat/$id")({
@@ -106,6 +106,13 @@ function ChatRoom() {
 
   const isPoster = chat.poster_id === user.id;
   const other = isPoster ? chat.applicant : chat.poster;
+  const requestMode = task ? isRequestMode(task.category) : false;
+  const locked = requestMode && chat.status !== "Accepted";
+  const canPickHelper =
+    isPoster &&
+    task?.status === "Open" &&
+    (task.category === "Hustle" ||
+      (task.category === "Gigs" && task.listing_type !== "offer" && chat.status === "Accepted"));
 
   return (
     <div className="flex min-h-[calc(100vh-9rem)] flex-col">
@@ -128,14 +135,14 @@ function ChatRoom() {
         </div>
       </div>
 
-      {isPoster && task?.status === "Open" ? (
+      {canPickHelper ? (
         <Button className="mt-3" onClick={() => accept.mutate()} disabled={accept.isPending}>
           {accept.isPending ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
           Accept {other?.full_name} for this task
         </Button>
       ) : null}
 
-      {task?.status === "Accepted" ? (
+      {task?.status === "Accepted" && (task.helper_id === chat.applicant_id) ? (
         <Link
           to="/task/$id"
           params={{ id: String(task.id) }}
@@ -177,6 +184,16 @@ function ChatRoom() {
         <div ref={bottomRef} />
       </div>
 
+      {locked ? (
+        <div className="sticky bottom-20 flex items-center gap-2 rounded-xl bg-surface p-3 text-xs text-muted-foreground">
+          <Lock className="size-4 shrink-0 text-primary" />
+          {chat.status === "Pending"
+            ? isPoster
+              ? "Accept this request on the post page to open the chat."
+              : "Chat opens once the poster accepts your request."
+            : "This request is closed, so the chat is locked."}
+        </div>
+      ) : (
       <form
         className="sticky bottom-20 flex gap-2 bg-background pt-2"
         onSubmit={(e) => {
@@ -196,6 +213,7 @@ function ChatRoom() {
           <Send className="size-4" />
         </Button>
       </form>
+      )}
     </div>
   );
 }

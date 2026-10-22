@@ -4,8 +4,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   ArrowLeft,
+  CalendarClock,
+  Check,
   Clock,
   Gift,
+  MapPin,
+  Users,
+  X,
   Hourglass,
   KeyRound,
   Loader2,
@@ -18,24 +23,39 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RatingDialog } from "@/components/RatingDialog";
-import { CATEGORY_META, countdown, relativeTime } from "@/lib/campus";
+import { InterestButton } from "@/components/InterestButton";
+import { ReportListingDialog } from "@/components/ReportListingDialog";
+import {
+  CATEGORY_META,
+  COMPENSATION_LABEL,
+  GROUP_PREF_LABEL,
+  LISTING_LABEL,
+  countdown,
+  formatPlanned,
+  isRequestMode,
+  relativeTime,
+  spotsLeft,
+} from "@/lib/campus";
 import { taskQuery, taskChatsQuery } from "@/lib/queries";
+import { useRespondToRequest } from "@/lib/requests";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/task/$id")({
   head: () => ({
     meta: [
-      { title: "Task details — Campus Hustle" },
+      { title: "Post details — Campus Hustle" },
       {
         name: "description",
         content:
           "Chat privately, agree on the reward and complete the handover with a secure 4-digit PIN.",
       },
-      { property: "og:title", content: "Task details — Campus Hustle" },
+      { property: "og:title", content: "Post details — Campus Hustle" },
       {
         property: "og:description",
-        content: "Private chat, secure handshake PIN and mutual ratings for a campus task.",
+        content: "Requests, private chat, secure handshake PIN and mutual ratings for a campus post.",
       },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: TaskDetail,
@@ -53,6 +73,7 @@ function TaskDetail() {
   const isHelper = task?.helper_id === user.id;
   const { data: chats } = useQuery({ ...taskChatsQuery(taskId), enabled: !!task });
 
+  const respond = useRespondToRequest();
   const [pinInput, setPinInput] = useState("");
   const [rateOpen, setRateOpen] = useState(false);
 
@@ -93,7 +114,7 @@ function TaskDetail() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
-      toast.success("Task cancelled");
+      toast.success("Post closed");
     },
   });
 
@@ -145,6 +166,11 @@ function TaskDetail() {
   const timer = countdown(task.expires_at);
   const myChat = (chats ?? []).find((c) => c.applicant_id === user.id);
   const counterpart = isPoster ? task.helper : task.poster;
+  const requestMode = isRequestMode(task.category);
+  const acceptedCount = (chats ?? []).filter((c) => c.status === "Accepted").length;
+  const spots = spotsLeft(task.group_size, acceptedCount);
+  const visibleRequests = (chats ?? []).filter((c) => c.status !== "Withdrawn");
+  const when = formatPlanned(task.planned_for);
 
   return (
     <div className="space-y-4">
@@ -173,10 +199,47 @@ function TaskDetail() {
         ) : null}
 
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
-            <Gift className="size-3.5 text-primary" />
-            {task.reward}
-          </span>
+          {task.subcategory ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              {task.subcategory}
+            </span>
+          ) : null}
+          {task.category === "Gigs" && task.listing_type ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              {LISTING_LABEL[task.listing_type]}
+            </span>
+          ) : null}
+          {task.compensation ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-semibold text-primary">
+              {COMPENSATION_LABEL[task.compensation]}
+            </span>
+          ) : null}
+          {task.reward ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              <Gift className="size-3.5 text-primary" />
+              {task.reward}
+            </span>
+          ) : null}
+          {when ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              <CalendarClock className="size-3.5 text-primary" /> {when}
+            </span>
+          ) : null}
+          {task.group_pref ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              <Users className="size-3.5 text-primary" /> {GROUP_PREF_LABEL[task.group_pref]}
+            </span>
+          ) : null}
+          {task.group_size && task.group_pref !== "partner" ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              <Users className="size-3.5 text-primary" /> Group of up to {task.group_size}
+            </span>
+          ) : null}
+          {task.location_note ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
+              <MapPin className="size-3.5 text-primary" /> {task.location_note}
+            </span>
+          ) : null}
           <span className="inline-flex items-center gap-1 rounded-lg bg-surface px-2 py-1 text-xs font-medium">
             {task.status}
           </span>
@@ -203,8 +266,26 @@ function TaskDetail() {
         </div>
       </div>
 
+      {/* Request-based posts: sports, hangouts, student hustles */}
+      {requestMode && !isPoster && (task.status === "Open" || myChat?.status === "Accepted") ? (
+        <div className="space-y-2">
+          <InterestButton
+            taskId={taskId}
+            isOwner={false}
+            request={myChat}
+            size="lg"
+            className="w-full justify-center"
+          />
+          <p className="text-center text-xs text-muted-foreground">
+            {myChat?.status === "Accepted"
+              ? "You're in. Sort out the details in your private chat."
+              : "The private chat opens once the poster accepts your request."}
+          </p>
+        </div>
+      ) : null}
+
       {/* Applicant actions */}
-      {!isPoster && task.status === "Open" ? (
+      {!requestMode && !isPoster && task.status === "Open" ? (
         <Button
           size="lg"
           className="w-full"
@@ -216,8 +297,79 @@ function TaskDetail() {
         </Button>
       ) : null}
 
+      {/* Poster: incoming requests for request-based posts */}
+      {isPoster && requestMode ? (
+        <div className="glass-card rounded-2xl p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+              Requests
+            </h2>
+            {spots !== null ? (
+              <span className="text-xs font-semibold text-primary">
+                {spots === 0 ? "Group full" : `${spots} spot${spots === 1 ? "" : "s"} left`}
+              </span>
+            ) : null}
+          </div>
+          {visibleRequests.length === 0 ? (
+            <p className="mt-2 text-sm text-muted-foreground">
+              No requests yet. You'll get a notification when someone's interested.
+            </p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {visibleRequests.map((c) => (
+                <li key={c.id} className="flex items-center gap-2 rounded-xl bg-surface p-3">
+                  <UserAvatar url={c.applicant?.avatar_url} name={c.applicant?.full_name} className="size-9 text-xs" />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">{c.applicant?.full_name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      ★ {(c.applicant?.rating ?? 5).toFixed(1)} · {c.status === "Pending" ? "Wants to join" : c.status}
+                    </p>
+                  </div>
+                  <div className="ml-auto flex shrink-0 gap-1.5">
+                    {c.status === "Pending" ? (
+                      <>
+                        <Button
+                          size="sm"
+                          onClick={() => respond.mutate({ chatId: c.id, accept: true })}
+                          disabled={respond.isPending || spots === 0 || task.status !== "Open"}
+                          aria-label={`Accept ${c.applicant?.full_name ?? "request"}`}
+                        >
+                          <Check className="size-4" /> Accept
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          onClick={() => respond.mutate({ chatId: c.id, accept: false })}
+                          disabled={respond.isPending}
+                          aria-label={`Decline ${c.applicant?.full_name ?? "request"}`}
+                        >
+                          <X className="size-4" />
+                        </Button>
+                      </>
+                    ) : c.status === "Accepted" ? (
+                      <Link
+                        to="/chat/$id"
+                        params={{ id: String(c.id) }}
+                        className="rounded-lg bg-card px-3 py-1.5 text-xs font-semibold text-primary"
+                      >
+                        Chat
+                      </Link>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+          {task.category === "Gigs" && task.listing_type === "request" && task.status === "Open" ? (
+            <p className="mt-3 text-xs text-muted-foreground">
+              Once you've chatted, confirm your helper from the chat to get the handover PIN and ratings.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {/* Poster: applicants list */}
-      {isPoster ? (
+      {isPoster && !requestMode ? (
         <div className="glass-card rounded-2xl p-4">
           <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
             Applicants
@@ -303,9 +455,11 @@ function TaskDetail() {
           onClick={() => cancel.mutate()}
           className="w-full py-2 text-center text-sm font-semibold text-urgent"
         >
-          Cancel this task
+          {requestMode ? "Close this post" : "Cancel this task"}
         </button>
       ) : null}
+
+      {!isPoster ? <ReportListingDialog posterId={task.poster_id} taskId={taskId} title={task.title} /> : null}
 
       {counterpart ? (
         <RatingDialog
