@@ -1,8 +1,8 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-// Garba Night is the only featured event; the old events list now points there.
+// Upcoming events live in the "Events & Fests" section of the home page.
 export const Route = createFileRoute("/_authenticated/events/")({
   beforeLoad: () => {
-    throw redirect({ to: "/garba", replace: true });
+    throw redirect({ to: "/", hash: "events", replace: true });
   },
 });
