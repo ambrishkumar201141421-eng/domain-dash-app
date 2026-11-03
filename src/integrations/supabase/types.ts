@@ -712,6 +712,7 @@ export type Database = {
       }
       is_active_user: { Args: never; Returns: boolean }
       is_chat_member: { Args: { p_chat_id: number }; Returns: boolean }
+      is_college_domain: { Args: { p_domain: string }; Returns: boolean }
       is_connection_member: {
         Args: { p_interest_id: number }
         Returns: boolean

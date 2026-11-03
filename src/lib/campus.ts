@@ -151,8 +151,15 @@ export function formatPlanned(iso: string | null | undefined) {
 
 const COLLEGE_EMAIL = /^[^\s@]+@[^\s@]+\.(edu|edu\.[a-z]{2}|ac\.[a-z]{2})$/i;
 
+/** Official student domains that don't end in .edu / .ac.in. Mirror of public.is_college_domain(). */
+export const EXTRA_COLLEGE_DOMAINS = ["svkmmumbai.onmicrosoft.com"];
+
 export function isCollegeEmail(email: string) {
-  return COLLEGE_EMAIL.test(email.trim());
+  const clean = email.trim().toLowerCase();
+  if (COLLEGE_EMAIL.test(clean)) return true;
+  const at = clean.indexOf("@");
+  if (at < 1 || clean.indexOf("@", at + 1) !== -1 || /\s/.test(clean)) return false;
+  return EXTRA_COLLEGE_DOMAINS.includes(clean.slice(at + 1));
 }
 
 export function domainOf(email: string) {
