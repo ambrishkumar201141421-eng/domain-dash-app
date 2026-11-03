@@ -15,3 +15,4 @@
 - All homepage sections share the `tasks` table, split by `category` (Hustle = Campus Help, Playground = Sports, Lounge = Hangouts, Gigs = Student Hustles), so there is one task, reputation and moderation system.
 - Request-based posts (every category except Hustle) go through `request_to_join` / `respond_to_request` / `withdraw_request` RPCs on `chats`; `can_message_chat` keeps messaging locked until a request is Accepted, so chat gating lives in the database, not the UI.
 - Ended events are archived (not deleted) and restrictive policies block new participants/interests on non-live events, so past matches and messages survive.
+- Approved student email domains are `public.is_college_domain()` (regex for .edu/.ac.xx plus an explicit extra list), enforced in `ensure_profile` and a BEFORE INSERT trigger on profiles; `EXTRA_COLLEGE_DOMAINS` in src/lib/campus.ts mirrors the extra list for form hints, so the database stays the gate.

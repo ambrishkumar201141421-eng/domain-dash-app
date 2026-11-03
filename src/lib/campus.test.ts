@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isRequestMode, isUpcomingEvent, rewardRequired, spotsLeft, timeSlotOf } from "./campus";
+import { isCollegeEmail, isRequestMode, isUpcomingEvent, rewardRequired, spotsLeft, timeSlotOf } from "./campus";
 
 describe("rewardRequired", () => {
   it("requires a reward on Campus Help tasks", () => expect(rewardRequired("Hustle")).toBe(true));
@@ -35,4 +35,17 @@ describe("isUpcomingEvent", () => {
     expect(isUpcomingEvent({ starts_at: "2026-10-01T18:00:00Z", ends_at: "2026-10-01T23:00:00Z" })).toBe(false));
   it("shows an event that ends in the future", () =>
     expect(isUpcomingEvent({ starts_at: null, ends_at: new Date(Date.now() + 86_400_000).toISOString() })).toBe(true));
+});
+
+describe("isCollegeEmail", () => {
+  it("accepts the SVKM Mumbai example address", () =>
+    expect(isCollegeEmail("pratham.tiwari79@svkmmumbai.onmicrosoft.com")).toBe(true));
+  it("accepts any student on the SVKM Mumbai domain", () =>
+    expect(isCollegeEmail("Another.Student@SVKMMumbai.onmicrosoft.com")).toBe(true));
+  it("still accepts IIIT Kottayam addresses", () => expect(isCollegeEmail("123ad0006@iiitk.ac.in")).toBe(true));
+  it("still accepts .edu addresses", () => expect(isCollegeEmail("student@mit.edu")).toBe(true));
+  it("rejects other onmicrosoft.com tenants", () => expect(isCollegeEmail("someone@contoso.onmicrosoft.com")).toBe(false));
+  it("rejects lookalike SVKM subdomains", () =>
+    expect(isCollegeEmail("x@evil.svkmmumbai.onmicrosoft.com")).toBe(false));
+  it("rejects gmail", () => expect(isCollegeEmail("someone@gmail.com")).toBe(false));
 });
